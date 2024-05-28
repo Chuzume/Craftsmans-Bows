@@ -12,6 +12,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import com.example.init.Sound;
 
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class ShortBowItem extends BowItem {
         if (!world.isClient() && !list.isEmpty()) {
             this.shootAll(world, playerEntity, playerEntity.getActiveHand(), stack, list, f * 1.6f, 0.0f, f == 1.0f, null);
         }
-        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 100.0f, 1.0f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + f * 0.5f);
+        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), Sound.LEGACY_SHOOT_1, SoundCategory.PLAYERS, 100.0f, 1.0f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + f * 0.5f);
 
         //腕振る処理
         //Hand activeHand = playerEntity.getActiveHand();
