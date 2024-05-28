@@ -1,0 +1,6 @@
+{
+    "parent": "item/bow",
+    "textures": {
+        "layer0": "example:item/shortbow_pulling_2"
+    }
+}
