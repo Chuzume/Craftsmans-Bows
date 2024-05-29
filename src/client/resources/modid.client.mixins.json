@@ -3,6 +3,7 @@
   "package": "com.example.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "CustomFOV",
     "DisableItemUsingSlowdown",
     "ExampleClientMixin"
   ],
