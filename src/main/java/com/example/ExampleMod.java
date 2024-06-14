@@ -12,18 +12,19 @@ public class ExampleMod implements ModInitializer {
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger("modid");
-	public static final String Mod_ID = "hoge";
+	public static final String Mod_ID = "example";
 
 
 	@Override
 	public void onInitialize() {
 		item.init();
-		Sound.init();
-		initSounds.register();
+		Entity.init();
+		ModSoundEvents.init();
 	}
 
 	public static class SampleGlobal{
-		public static float UsingMoveSpeed = 0.0f;
+		public static float UsingMoveSpeed = Float.NaN;
+		public static float CustomFOV = Float.NaN;
 		public static boolean IgnoreSlowdown = true;
 
 	}

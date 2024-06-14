@@ -1,0 +1,28 @@
+{
+    "parent": "item/bow",
+    "textures": {
+        "layer0": "example:item/shortbow"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "pulling": 1
+            },
+            "model": "example:item/shortbow_pulling_0"
+        },
+        {
+            "predicate": {
+                "pulling": 1,
+                "pull": 1.0
+            },
+            "model": "example:item/shortbow_pulling_1"
+        },
+        {
+            "predicate": {
+                "pulling": 1,
+                "pull": 2.0
+            },
+            "model": "example:item/shortbow_pulling_2"
+        }
+    ]
+}

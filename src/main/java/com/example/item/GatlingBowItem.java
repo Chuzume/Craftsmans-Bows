@@ -2,17 +2,18 @@ package com.example.item;
 
 import com.example.ExampleMod;
 import com.example.init.ModSoundEvents;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsage;
+import net.minecraft.item.*;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Direction;
@@ -28,7 +29,9 @@ public class GatlingBowItem extends BowItem {
     }
 
 //変数の定義
-    float pullTime;
+    int pullTime;
+    int RapidLimit = 10;
+    int RapidShot = RapidLimit;
 
 //弓を引いた時間を取得する処理のようだ。今回は書き換えて、0.55以上引き絞ったら強制的に1（フルチャージ）になるようにした
     public static float getPullProgress(int useTicks) {
@@ -42,37 +45,76 @@ public class GatlingBowItem extends BowItem {
 //最初の使用時のアクション
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        user.playSound(SoundEvents.ITEM_CROSSBOW_LOADING_START, 1.0f, 1.25f);
+        user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 1.25f);
         return ItemUsage.consumeHeldItem(world, user, hand);
     }
 
 //アイテムを使用しているときの処理？
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-    //    if (!world.isClient) {
-//
-    //    //プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
-    //        PlayerEntity playerEntity = (PlayerEntity) user;
-    //        ItemStack itemStack = playerEntity.getProjectileType(stack);
-    //        if (itemStack.isEmpty()) {
-    //            return;
-    //        }
-//
-    //        user.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 1.0f, 1.25f);
-//
-    //        List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
-    //        if (!world.isClient() && !list.isEmpty()) {
-    //            this.shootAll(world, user, user.getActiveHand(), stack, list, 1.6f, 5.0f, true, null);
-    //        }
-    //    }
+        PlayerEntity playerEntity = (PlayerEntity) user;
+        //RapidShot = this.getMaxUseTime(stack) - remainingUseTicks;
+        //user.sendMessage(Text.literal(String.valueOf(RapidShot)));
+        //playerEntity.getItemCooldownManager().set(this, 20);
+
+        //if (pullTime >= 10){
+        //    this.GatingShot(world,user,stack,remainingUseTicks);
+        //}
+
+        if (playerEntity.getItemCooldownManager().isCoolingDown(stack.getItem())) {
+            //user.sendMessage(Text.literal("クールダウン中だ！"));
+        }
+    //クールタイム入ってないときの処理
+        else {
+            this.GatingShot(world,user,stack,remainingUseTicks);
+            playerEntity.getItemCooldownManager().set(this, RapidShot);
+        }
+    }
+
+//アイテムを放り込んでいるときの処理
+    @Override
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        PlayerEntity playerEntity = (PlayerEntity) entity;
+        //playerEntity.sendMessage(Text.literal(String.valueOf(RapidShot)));
+
+    }
+
+    public void GatingShot(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+
+    //連射力周り
+        if(RapidShot <= RapidLimit && !world.isClient()) {
+            RapidShot = RapidShot - 1;
+        }
+
+    //音を鳴らす処理
+        user.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 1.0f, 1.25f);
+
+    //プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
+        PlayerEntity playerEntity = (PlayerEntity) user;
+        ItemStack itemStack = playerEntity.getProjectileType(stack);
+        if (itemStack.isEmpty()) {
+            return;
+        }
+
+    //弓につがえた矢を取得している？
+        List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
+    //ワールドがサーバーなら？
+        if (world instanceof ServerWorld) {
+            ServerWorld serverWorld = (ServerWorld)world;
+            if (!list.isEmpty()) {
+                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 1.6f, 1.0f, false, null);
+            }
+        }
     }
 
 //使用をやめたとき、つまりクリックを離したときの処理だ。
    @Override
    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-       if (!(user instanceof PlayerEntity)) {
+       if (!(user instanceof PlayerEntity playerEntity)) {
            return;
        }
+       RapidShot = RapidLimit;
+       playerEntity.getItemCooldownManager().set(this, 20);
        user.playSound(SoundEvents.BLOCK_WOODEN_BUTTON_CLICK_OFF, 1.0f, 1.25f);
     }
 }
