@@ -1,9 +1,9 @@
 {
   "required": true,
-  "package": "com.example.mixin",
+  "package": "com.chuzbows.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ExampleMixin"
+    "ChuzBowsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

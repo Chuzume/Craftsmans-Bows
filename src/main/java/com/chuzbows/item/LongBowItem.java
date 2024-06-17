@@ -1,25 +1,20 @@
-package com.example.item;
+package com.chuzbows.item;
 
-import com.example.ExampleMod;
-import com.example.init.ModSoundEvents;
+import com.chuzbows.ChuzBowsCore;
+import com.chuzbows.init.ModSoundEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BowItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
-import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.List;
 
@@ -75,11 +70,11 @@ public class LongBowItem
 
         //ExampleMod.SampleGlobal.UsingMoveSpeed = 5.0f - (2.0f + pullTime);
         FOV = 1.0f - pullTime/3;
-        ExampleMod.SampleGlobal.CustomFOV = FOV;
+        ChuzBowsCore.Global.CustomFOV = FOV;
 
     // ズーム停止
         if (FOV <= 0.5 ){
-            ExampleMod.SampleGlobal.CustomFOV = 0.5f;
+            ChuzBowsCore.Global.CustomFOV = 0.5f;
         }
 
     //フルチャージ
@@ -110,7 +105,7 @@ public class LongBowItem
         }
 
     //ここが放つ処理に見える。
-        ExampleMod.SampleGlobal.UsingMoveSpeed = Float.NaN;
+        ChuzBowsCore.Global.UsingMoveSpeed = Float.NaN;
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
         if (world instanceof ServerWorld) {
             ServerWorld serverWorld = (ServerWorld) world;

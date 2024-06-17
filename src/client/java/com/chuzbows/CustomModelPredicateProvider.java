@@ -1,10 +1,10 @@
-package com.example;
+package com.chuzbows;
 
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 
-import static com.example.init.item.*;
+import static com.chuzbows.init.item.*;
 
 public class CustomModelPredicateProvider {
 

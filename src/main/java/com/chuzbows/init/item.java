@@ -1,6 +1,6 @@
-package com.example.init;
+package com.chuzbows.init;
 
-import com.example.item.*;
+import com.chuzbows.item.*;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;

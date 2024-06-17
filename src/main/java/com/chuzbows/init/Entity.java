@@ -1,6 +1,6 @@
-package com.example.init;
+package com.chuzbows.init;
 
-import com.example.entity.ShotArrowEntity;
+import com.chuzbows.entity.ShotArrowEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;

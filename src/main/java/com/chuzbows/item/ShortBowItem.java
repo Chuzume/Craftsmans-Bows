@@ -1,22 +1,17 @@
-package com.example.item;
+package com.chuzbows.item;
 
-import com.example.ExampleMod;
-import com.example.init.item;
-import net.minecraft.entity.Entity;
+import com.chuzbows.ChuzBowsCore;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsage;
-import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import com.example.init.ModSoundEvents;
+import com.chuzbows.init.ModSoundEvents;
 
 import java.util.List;
 
@@ -53,7 +48,7 @@ public class ShortBowItem extends BowItem {
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         PlayerEntity playerEntity = (PlayerEntity) user;
-        ExampleMod.SampleGlobal.UsingMoveSpeed = 5.0f;
+        ChuzBowsCore.Global.UsingMoveSpeed = 5.0f;
     }
 
 //使用をやめたとき、つまりクリックを離したときの処理だ。
@@ -78,7 +73,7 @@ public class ShortBowItem extends BowItem {
         }
 
     //ここが放つ処理に見える。
-        ExampleMod.SampleGlobal.UsingMoveSpeed = Float.NaN;
+        ChuzBowsCore.Global.UsingMoveSpeed = Float.NaN;
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
         if (world instanceof ServerWorld) {
             ServerWorld serverWorld = (ServerWorld) world;

@@ -16,10 +16,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"com.chuzbows.ChuzBowsCore"
 		],
 		"client": [
-			"com.example.ExampleModClient"
+			"com.chuzbows.ChuzBowsCoreClient"
 		]
 	},
 	"mixins": [

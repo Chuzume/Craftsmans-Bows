@@ -1,11 +1,11 @@
-package com.example.render;
+package com.chuzbows.render;
 
 import net.minecraft.util.Identifier;
-import com.example.entity.ShotArrowEntity;
+import com.chuzbows.entity.ShotArrowEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.ProjectileEntityRenderer;
 
-import static com.example.ExampleMod.Mod_ID;
+import static com.chuzbows.ChuzBowsCore.Mod_ID;
 
 public class ShotArrowEntityRenderer extends ProjectileEntityRenderer<ShotArrowEntity> {
     public static final Identifier TEXTURE = Identifier.of(Mod_ID,"textures/entity/projectiles/shot_arrow.png");

@@ -1,11 +1,10 @@
 {
   "required": true,
-  "package": "com.example.mixin.client",
+  "package": "com.chuzbows.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ChangeableUsingMoveSpeed",
-    "CustomFOV",
-    "ExampleClientMixin"
+    "CustomFOV"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,13 +1,13 @@
-package com.example;
+package com.chuzbows;
 
-import com.example.init.*;
+import com.chuzbows.init.*;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ExampleMod implements ModInitializer {
+public class ChuzBowsCore implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
@@ -22,7 +22,7 @@ public class ExampleMod implements ModInitializer {
 		ModSoundEvents.init();
 	}
 
-	public static class SampleGlobal{
+	public static class Global {
 		public static float UsingMoveSpeed = Float.NaN;
 		public static float CustomFOV = Float.NaN;
 		public static boolean IgnoreSlowdown = true;

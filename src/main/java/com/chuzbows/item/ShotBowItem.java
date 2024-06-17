@@ -1,11 +1,10 @@
-package com.example.item;
+package com.chuzbows.item;
 
-import com.example.ExampleMod;
-import com.example.entity.ShotArrowEntity;
-import com.example.init.ModSoundEvents;
+import com.chuzbows.ChuzBowsCore;
+import com.chuzbows.entity.ShotArrowEntity;
+import com.chuzbows.init.ModSoundEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.*;
@@ -44,7 +43,7 @@ public class ShotBowItem extends BowItem {
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         PlayerEntity playerEntity = (PlayerEntity) user;
-        ExampleMod.SampleGlobal.UsingMoveSpeed = 2.5f;
+        ChuzBowsCore.Global.UsingMoveSpeed = 2.5f;
     }
 
     //public ProjectileEntity createEntity(World world, Position pos, ItemStack stack, Direction direction) {
@@ -96,7 +95,7 @@ public class ShotBowItem extends BowItem {
         }
 
     //ここが放つ処理に見える。
-        ExampleMod.SampleGlobal.UsingMoveSpeed = Float.NaN;
+        ChuzBowsCore.Global.UsingMoveSpeed = Float.NaN;
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
         if (world instanceof ServerWorld) {
             ServerWorld serverWorld = (ServerWorld)world;

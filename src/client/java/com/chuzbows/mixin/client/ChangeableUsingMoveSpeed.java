@@ -1,6 +1,6 @@
-package com.example.mixin.client;
+package com.chuzbows.mixin.client;
 
-import com.example.ExampleMod;
+import com.chuzbows.ChuzBowsCore;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -31,11 +31,11 @@ public abstract class ChangeableUsingMoveSpeed extends AbstractClientPlayerEntit
     @Inject(method = "tickMovement()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/input/Input;tick(ZF)V", shift = At.Shift.AFTER))
     private void ChangeableWeaponSlowdown(CallbackInfo ci)
     {
-        if (this.isUsingItem() && !this.hasVehicle() && !Float.isNaN(ExampleMod.SampleGlobal.UsingMoveSpeed))
+        if (this.isUsingItem() && !this.hasVehicle() && !Float.isNaN(ChuzBowsCore.Global.UsingMoveSpeed))
         {
-            this.input.movementForward *= ExampleMod.SampleGlobal.UsingMoveSpeed;
-            this.input.movementSideways *= ExampleMod.SampleGlobal.UsingMoveSpeed;
-            ExampleMod.SampleGlobal.UsingMoveSpeed = Float.NaN;
+            this.input.movementForward *= ChuzBowsCore.Global.UsingMoveSpeed;
+            this.input.movementSideways *= ChuzBowsCore.Global.UsingMoveSpeed;
+            ChuzBowsCore.Global.UsingMoveSpeed = Float.NaN;
             //ExampleMod.SampleGlobal.IgnoreSlowdown = false;
         }
     }

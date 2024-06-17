@@ -1,6 +1,6 @@
-package com.example.mixin.client;
+package com.chuzbows.mixin.client;
 
-import com.example.ExampleMod;
+import com.chuzbows.ChuzBowsCore;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class CustomFOV {
     @Inject(method = "getFovMultiplier",at = @At(value = "HEAD"), cancellable = true)
     public void getFovMultiplier(CallbackInfoReturnable<Float> cir) {
-        if (!Float.isNaN(ExampleMod.SampleGlobal.CustomFOV)){
-            float f = ExampleMod.SampleGlobal.CustomFOV; // float fを希望の値に変更
+        if (!Float.isNaN(ChuzBowsCore.Global.CustomFOV)){
+            float f = ChuzBowsCore.Global.CustomFOV; // float fを希望の値に変更
             cir.setReturnValue(f);
-            ExampleMod.SampleGlobal.CustomFOV = Float.NaN;
+            ChuzBowsCore.Global.CustomFOV = Float.NaN;
         }
     }
 }

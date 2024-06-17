@@ -1,6 +1,6 @@
-package com.example.entity;
+package com.chuzbows.entity;
 
-import com.example.init.Entity;
+import com.chuzbows.init.Entity;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

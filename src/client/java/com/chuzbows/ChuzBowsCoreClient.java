@@ -1,12 +1,12 @@
-package com.example;
+package com.chuzbows;
 
-import com.example.init.Entity;
-import com.example.render.ShotArrowEntityRenderer;
+import com.chuzbows.render.ShotArrowEntityRenderer;
+import com.chuzbows.init.Entity;
 import net.fabricmc.api.ClientModInitializer;
 //import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 
-public class ExampleModClient implements ClientModInitializer {
+public class ChuzBowsCoreClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		CustomModelPredicateProvider.registerModModels();
