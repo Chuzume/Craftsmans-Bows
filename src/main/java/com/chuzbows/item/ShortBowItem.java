@@ -1,10 +1,9 @@
 package com.chuzbows.item;
 
-import com.chuzbows.ChuzBowsCore;
+import com.chuzbows.item_interface.CustomUsingMoveItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -15,10 +14,14 @@ import com.chuzbows.init.ModSoundEvents;
 
 import java.util.List;
 
-public class ShortBowItem extends BowItem {
+import static java.lang.System.getLogger;
+
+public class ShortBowItem extends BowItem implements CustomUsingMoveItem{
     public ShortBowItem(Settings settings) {
         super(settings);
     }
+
+float MovementSpeed = 5.0f;
 
 //弓を引いた時間を取得する処理のようだ。今回は書き換えて、0.55以上引き絞ったら強制的に1（フルチャージ）になるようにした
     public static float getPullProgress(int useTicks) {
@@ -48,7 +51,7 @@ public class ShortBowItem extends BowItem {
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         PlayerEntity playerEntity = (PlayerEntity) user;
-        ChuzBowsCore.Global.UsingMoveSpeed = 5.0f;
+        MovementSpeed = 5.0f;
     }
 
 //使用をやめたとき、つまりクリックを離したときの処理だ。
@@ -73,7 +76,7 @@ public class ShortBowItem extends BowItem {
         }
 
     //ここが放つ処理に見える。
-        ChuzBowsCore.Global.UsingMoveSpeed = Float.NaN;
+        //ChuzBowsCore.Global.UsingMoveSpeed = Float.NaN;
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
         if (world instanceof ServerWorld) {
             ServerWorld serverWorld = (ServerWorld) world;
@@ -87,5 +90,17 @@ public class ShortBowItem extends BowItem {
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
             }
         }
+    }
+
+//インターフェースとして持っておくべき処理
+    @Override
+    public float getMovementSpeed() {
+        return MovementSpeed;
+    }
+
+    @Override
+    public float resetMovementSpeed() {
+        MovementSpeed = Float.NaN;
+        return MovementSpeed;
     }
 }

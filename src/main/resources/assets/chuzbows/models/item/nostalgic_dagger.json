@@ -1,6 +1,6 @@
 {
     "parent": "item/handheld",
     "textures": {
-        "layer0": "example:item/nostalgic_dagger"
+        "layer0": "chuzbows:item/nostalgic_dagger"
     }
 }

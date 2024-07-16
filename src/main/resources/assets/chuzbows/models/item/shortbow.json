@@ -1,28 +1,28 @@
 {
     "parent": "item/bow",
     "textures": {
-        "layer0": "example:item/shortbow"
+        "layer0": "chuzbows:item/shortbow"
     },
     "overrides": [
         {
             "predicate": {
                 "pulling": 1
             },
-            "model": "example:item/shortbow_pulling_0"
+            "model": "chuzbows:item/shortbow_pulling_0"
         },
         {
             "predicate": {
                 "pulling": 1,
-                "pull": 1.0
+                "pull": 0.25
             },
-            "model": "example:item/shortbow_pulling_1"
+            "model": "chuzbows:item/shortbow_pulling_1"
         },
         {
             "predicate": {
                 "pulling": 1,
-                "pull": 2.0
+                "pull": 0.5
             },
-            "model": "example:item/shortbow_pulling_2"
+            "model": "chuzbows:item/shortbow_pulling_2"
         }
     ]
 }

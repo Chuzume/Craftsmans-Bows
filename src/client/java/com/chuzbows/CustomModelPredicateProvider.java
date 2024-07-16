@@ -11,7 +11,7 @@ public class CustomModelPredicateProvider {
     public static void registerModModels(){
         registerNewBow(SHORT_BOW);
         registerNewBow(LONG_BOW);
-        registerNewBow(SHOT_BOW);
+        registerNewBow(SHOT_CROSSBOW);
         //registerNewBow(GATLING_BOW);
 
     }
