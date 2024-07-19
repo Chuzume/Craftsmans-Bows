@@ -1,6 +1,5 @@
 package com.chuzbows.item;
 
-import com.chuzbows.ChuzBowsCore;
 import com.chuzbows.entity.MachineArrowEntity;
 import com.chuzbows.init.ModSoundEvents;
 import com.chuzbows.item_interface.CustomArmPoseItem;
@@ -81,9 +80,6 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
 
     @Override
     protected ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
-        //ArrowItem arrowItem;
-        //Item item = projectileStack.getItem();
-        //ArrowItem arrowItem2 = item instanceof ArrowItem ? (arrowItem = (ArrowItem) item) : (ArrowItem) Items.ARROW;
         MachineArrowEntity persistentProjectileEntity = new MachineArrowEntity(world, shooter, weaponStack, projectileStack);
 
         if (critical) {
@@ -120,7 +116,6 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         }
 
         //ここが放つ処理に見える。
-        ChuzBowsCore.Global.UsingMoveSpeed = Float.NaN;
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
 
         if (world instanceof ServerWorld) {
@@ -157,9 +152,8 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
     }
 
     @Override
-    public float resetMovementSpeed() {
+    public void resetMovementSpeed() {
         MovementSpeed = Float.NaN;
-        return MovementSpeed;
     }
 
     //インターフェス「CustomArmPoseItem」として必要な処理
