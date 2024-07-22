@@ -13,14 +13,14 @@
         {
             "predicate": {
                 "pulling": 1,
-                "pull": 1.0
+                "pull": 0.5
             },
             "model": "chuzbows:item/shortbow_pulling_1"
         },
         {
             "predicate": {
                 "pulling": 1,
-                "pull": 2.0
+                "pull": 1.0
             },
             "model": "chuzbows:item/shortbow_pulling_2"
         }
