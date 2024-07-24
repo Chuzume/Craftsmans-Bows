@@ -1,6 +1,0 @@
-{
-  "parent": "item/crossbow",
-  "textures": {
-    "layer0": "chuzbows:item/gatling_crossbow_pulling_0"
-  }
-}

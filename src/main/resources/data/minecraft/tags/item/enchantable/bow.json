@@ -2,7 +2,7 @@
   "values": [
     "chuzbows:shortbow",
     "chuzbows:longbow",
-    "chuzbow:shot_crossbow",
-    "chuzbow:repeater_crossbow"
+    "chuzbows:shot_crossbow",
+    "chuzbows:repeater_crossbow"
   ]
 }
