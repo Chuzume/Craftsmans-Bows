@@ -1,0 +1,6 @@
+{
+    "parent": "item/bow",
+    "textures": {
+        "layer0": "chuzbows:item/longbow_pulling_1"
+    }
+}
