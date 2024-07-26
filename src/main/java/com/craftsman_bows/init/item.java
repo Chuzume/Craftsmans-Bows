@@ -11,10 +11,10 @@ import static com.craftsman_bows.CraftsmanBows.Mod_ID;
 
 public class item {
     // 新しいアイテムのインスタンス
-    public static final Item LONG_BOW = new LongBowItem(new Item.Settings().maxCount(1).maxDamage(500));
-    public static final Item SHORT_BOW = new ShortBowItem(new Item.Settings().maxCount(1).maxDamage(500));
-    public static final Item SHOT_CROSSBOW = new ShotCrossbowItem(new Item.Settings().maxCount(1).maxDamage(500));
-    public static final Item REPEATER_CROSSBOW = new RepeaterCrossbowItem(new Item.Settings().maxCount(1).maxDamage(500));
+    public static final Item LONG_BOW = new LongBowItem(new Item.Settings().maxCount(1).maxDamage(576));
+    public static final Item SHORT_BOW = new ShortBowItem(new Item.Settings().maxCount(1).maxDamage(576));
+    public static final Item SHOT_CROSSBOW = new ShotCrossbowItem(new Item.Settings().maxCount(1).maxDamage(600));
+    public static final Item REPEATER_CROSSBOW = new RepeaterCrossbowItem(new Item.Settings().maxCount(1).maxDamage(600));
 
     // アイテム追加処理
     public static void init() {
