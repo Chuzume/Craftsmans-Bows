@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "modid",
-	"version": "${1.0.0}",
+	"version": "1.0.0",
 	"name": "Craftsman's bows",
 	"description": "There are shortbow that are easy to use, longbow that are great for sniping, and crossbows that you have no idea how they work...",
 	"authors": [
@@ -12,7 +12,7 @@
 		"sources": "https://github.com/Chuzume/Craftsmans-Bows"
 	},
 	"license": "CC BY-SA 4.0",
-	"icon": "assets/modid/icon.png",
+	"icon": "assets/craftsman_bows/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
