@@ -3,9 +3,11 @@
   "package": "com.chuzbows.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "ArmPoseMixin",
     "ChangeableUsingMoveSpeed",
-    "ArmPose",
-    "CustomFOV"
+    "FovMixin",
+    "HeldItemRendererMixin",
+    "NoUsingSlowdownMixin"
   ],
   "injectors": {
     "defaultRequire": 1
