@@ -1,11 +1,13 @@
 package com.chuzbows.item;
 
-import com.chuzbows.entity.MachineArrowEntity;
+import com.chuzbows.interfaces.entity.BypassCooldown;
 import com.chuzbows.init.ModSoundEvents;
-import com.chuzbows.item_interface.CustomArmPoseItem;
-import com.chuzbows.item_interface.CustomUsingMoveItem;
+import com.chuzbows.interfaces.item.CustomArmPoseItem;
+import com.chuzbows.interfaces.item.CustomUsingMoveItem;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.*;
 import net.minecraft.server.world.ServerWorld;
@@ -15,26 +17,29 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, CustomArmPoseItem {
-        public ShotCrossbowItem(Settings settings) {
+    public ShotCrossbowItem(Settings settings) {
         super(settings);
     }
 
-    //変数
-    float MovementSpeed = 2.5f;
-    String StandbyArmPose = "CROSSBOW_HOLD";
-    String UsingArmPose = "CROSSBOW_CHARGE";
+    // 変数
+    boolean fullCharged;
+    float movementSpeed = 2.5f;
+    String standbyArmPose = "CROSSBOW_HOLD";
+    String usingArmPose = "CROSSBOW_CHARGE";
 
-    //最初の使用時のアクション
+    // 最初の使用時のアクション
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         boolean bl;
         ItemStack itemStack = user.getStackInHand(hand);
         boolean bl2 = bl = !user.getProjectileType(itemStack).isEmpty();
         if (user.isInCreativeMode() || bl) {
+            fullCharged = false;
             user.setCurrentHand(hand);
             user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 1.25f);
             return TypedActionResult.consume(itemStack);
@@ -42,50 +47,34 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         return TypedActionResult.fail(itemStack);
     }
 
-    //シンプルに右クリックを推し続けている時間を秒数換算で取得
-    public static float getChargeTime(int useTicks) {
-        float f = (float) useTicks / 20.0f;
-        return f;
-    }
-
-    //アイテムを使用しているときの処理？
+    // アイテムを使用しているときの処理？
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-        PlayerEntity playerEntity = (PlayerEntity) user;
-        MovementSpeed = 2.5f;
+        movementSpeed = 2.5f;
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
-        float chargeTime = getChargeTime(i);
 
-        //腕のポーズ変更
-        if(chargeTime < 0.9) {
-            UsingArmPose = "CROSSBOW_CHARGE";
+        // 腕のポーズ変更
+        if (getPullProgress(i) < 1.0) {
+            usingArmPose = "CROSSBOW_CHARGE";
+        } else {
+            usingArmPose = "CROSSBOW_HOLD";
         }
-        else{
-            UsingArmPose = "CROSSBOW_HOLD";
-        }
-
-        //logger = Logger.getLogger("YourClassName");
-        //logger.severe(String.valueOf(chargeTime));
-
-        //
-        if(chargeTime == 0.5f) {
-            user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_XYLOPHONE.value(), 1.0f, 1.0f);
-
-        }
-        if(chargeTime == 1.0f) {
+        if (getPullProgress(i) > 0.9 && !fullCharged) {
+            fullCharged = true;
             user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_XYLOPHONE.value(), 1.0f, 1.5f);
             user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
         }
     }
 
-    @Override
-    protected ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
-        MachineArrowEntity persistentProjectileEntity = new MachineArrowEntity(world, shooter, weaponStack, projectileStack);
-
-        if (critical) {
-            persistentProjectileEntity.setCustomCritical();
+    protected ProjectileEntity createShotArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, float divergence, boolean critical, boolean pickup) {
+        Item item = projectileStack.getItem();
+        ArrowItem arrowItem2 = item instanceof ArrowItem ? (ArrowItem) item : (ArrowItem) Items.ARROW;
+        PersistentProjectileEntity persistentProjectileEntity = arrowItem2.createArrow(world, projectileStack, shooter, weaponStack);
+        ((BypassCooldown) persistentProjectileEntity).setBypassDamageCooldown();
+        persistentProjectileEntity.setCritical(true);
+        if (!pickup) {
+            persistentProjectileEntity.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
         }
-
         return persistentProjectileEntity;
     }
 
@@ -94,75 +83,92 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         return UseAction.NONE;
     }
 
-    //使用をやめたとき、つまりクリックを離したときの処理だ。
+    protected void shootArrow(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float divergence, boolean pickup, @Nullable LivingEntity target) {
+        float f = EnchantmentHelper.getProjectileSpread(world, stack, shooter, 0.0f);
+        float g = projectiles.size() == 1 ? 0.0f : 2.0f * f / (float) (projectiles.size() - 1);
+        float h = (float) ((projectiles.size() - 1) % 2) * g / 2.0f;
+        float i = 1.0f;
+        for (int j = 0; j < projectiles.size(); ++j) {
+            ItemStack itemStack = projectiles.get(j);
+            if (itemStack.isEmpty()) continue;
+            float k = h + i * (float) ((j + 1) / 2) * g;
+            i = -i;
+            ProjectileEntity projectileEntity = this.createShotArrowEntity(world, shooter, stack, itemStack, divergence,true,pickup);
+            this.shoot(shooter, projectileEntity, j, 1.2f, divergence, k, target);
+            world.spawnEntity(projectileEntity);
+            stack.damage(this.getWeaponStackDamage(itemStack), shooter, LivingEntity.getSlotForHand(hand));
+            if (stack.isEmpty()) break;
+        }
+    }
+
+    // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         if (!(user instanceof PlayerEntity)) {
             return;
         }
 
-        //プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
+        // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         PlayerEntity playerEntity = (PlayerEntity) user;
         ItemStack itemStack = playerEntity.getProjectileType(stack);
         if (itemStack.isEmpty()) {
             return;
         }
 
-        //使用時間0.1未満では使用をキャンセルする処理のようだ
+        // 使用時間0.1未満では使用をキャンセルする処理のようだ
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
         float f = getPullProgress(i);
         if ((double) f < 1) {
             return;
         }
 
-        //ここが放つ処理に見える。
+        // ここが放つ処理に見える。
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
 
-        if (world instanceof ServerWorld) {
-            ServerWorld serverWorld = (ServerWorld) world;
-            if (!list.isEmpty() && f < 1) {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 1.6f, 0.0f, false, null);
-            } else {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 1.4f, 0.0f, f == 1.0f, null);
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 1.4f, 20.0f, f == 1.0f, null);
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 1.4f, 20.0f, f == 1.0f, null);
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 1.4f, 20.0f, f == 1.0f, null);
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 1.4f, 20.0f, f == 1.0f, null);
+
+        if (world instanceof ServerWorld serverWorld) {
+            if (!list.isEmpty()) {
+                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 0.0f, true, null);
+                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false, null);
+                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false, null);
+                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false, null);
+                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false, null);
             }
         }
 
         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 1.0f);
         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
 
-        //腕振る処理
+        // 腕振る処理
         Hand activeHand = user.getActiveHand();
         if (activeHand == Hand.MAIN_HAND) {
-            //現在のアクティブな手がメインハンドなら、メインハンドを振る
+            // 現在のアクティブな手がメインハンドなら、メインハンドを振る
             user.swingHand(Hand.MAIN_HAND);
         } else if (activeHand == Hand.OFF_HAND) {
-            //現在のアクティブな手がオフハンドなら、オフハンドを振る
+            // 現在のアクティブな手がオフハンドなら、オフハンドを振る
             user.swingHand(Hand.OFF_HAND);
         }
     }
 
-    //インターフェース「CustomUsingMoveItem」として必要な処理
+    // インターフェース「CustomUsingMoveItem」として必要な処理
     @Override
     public float getMovementSpeed() {
-        return MovementSpeed;
+        return movementSpeed;
     }
 
     @Override
     public void resetMovementSpeed() {
-        MovementSpeed = Float.NaN;
+        movementSpeed = Float.NaN;
     }
 
-    //インターフェス「CustomArmPoseItem」として必要な処理
+    // インターフェス「CustomArmPoseItem」として必要な処理
     @Override
     public String getUsingArmPose() {
-        return UsingArmPose;
+        return usingArmPose;
     }
+
     @Override
     public String getStandbyArmPose() {
-        return StandbyArmPose;
+        return standbyArmPose;
     }
 }
