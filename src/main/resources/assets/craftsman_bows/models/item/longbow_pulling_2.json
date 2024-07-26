@@ -1,0 +1,6 @@
+{
+    "parent": "item/bow",
+    "textures": {
+        "layer0": "craftsman_bows:item/longbow_pulling_2"
+    }
+}

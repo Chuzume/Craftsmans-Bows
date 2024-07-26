@@ -1,0 +1,36 @@
+{
+  "parent": "item/crossbow",
+  "textures": {
+    "layer0": "craftsman_bows:item/repeater_crossbow"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.6
+      },
+      "model": "craftsman_bows:item/repeater_crossbow_pulling_0"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.62
+      },
+      "model": "craftsman_bows:item/repeater_crossbow_pulling_1"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.64
+      },
+      "model": "craftsman_bows:item/repeater_crossbow_pulling_2"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 1
+      },
+      "model": "craftsman_bows:item/repeater_crossbow_shoot"
+    }
+  ]
+}
