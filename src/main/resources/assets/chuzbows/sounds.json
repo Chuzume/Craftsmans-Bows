@@ -1,5 +1,0 @@
-{
-  "legacy_arrow_1": {"sounds": ["craftsman_bows:erdie/arrow1"]},
-  "legacy_arrow_2": {"sounds": ["craftsman_bows:erdie/arrow2"]},
-  "bow_charge": {"sounds": ["minecraft:item/crossbow/loading_start"]}
-}
