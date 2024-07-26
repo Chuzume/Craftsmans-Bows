@@ -1,25 +1,25 @@
 {
 	"schemaVersion": 1,
 	"id": "modid",
-	"version": "${version}",
-	"name": "Example mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"version": "${1.0.0}",
+	"name": "Craftsman's bows",
+	"description": "There are shortbow that are easy to use, longbow that are great for sniping, and crossbows that you have no idea how they work...",
 	"authors": [
-		"Me!"
+		"Chuzume"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/Chuzume/Craftsmans-Bows"
 	},
-	"license": "CC0-1.0",
+	"license": "CC BY-SA 4.0",
 	"icon": "assets/modid/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.chuzbows.ChuzBowsCore"
+			"com.craftsman_bows.CraftsmanBows"
 		],
 		"client": [
-			"com.chuzbows.ChuzBowsCoreClient"
+			"com.craftsman_bows.CraftsmanBowsClient"
 		]
 	},
 	"mixins": [
@@ -37,5 +37,10 @@
 	},
 	"suggests": {
 		"another-mod": "*"
+	},
+	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/class_1676": ["com/craftsman_bows/interfaces/entity/BypassCooldown"]
+		}
 	}
 }
