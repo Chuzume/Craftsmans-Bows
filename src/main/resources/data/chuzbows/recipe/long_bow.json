@@ -1,0 +1,24 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "equipment",
+    "key": {
+        "g": {
+            "item": "minecraft:gold_ingot"
+        },
+        "/": {
+            "item": "minecraft:stick"
+        },
+        "S": {
+            "item": "minecraft:string"
+        }
+    },
+    "pattern": [
+        "g/S",
+        "/ S",
+        "g/S"
+    ],
+    "result": {
+        "id": "chuzbows:longbow",
+        "count": 1
+    }
+}

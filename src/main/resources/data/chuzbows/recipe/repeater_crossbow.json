@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "gDg",
+    "/n/",
+    " R "
+  ],
+  "key": {
+    "/": {
+      "item": "minecraft:stick"
+    },
+    "n": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "g": {
+      "item": "minecraft:gold_ingot"
+    },
+    "D": {
+      "item": "minecraft:dispenser"
+    },
+    "R": {
+      "item": "minecraft:repeater"
+    }
+  },
+  "result": {
+    "id": "chuzbows:repeater_crossbow",
+    "count": 1
+  }
+}
