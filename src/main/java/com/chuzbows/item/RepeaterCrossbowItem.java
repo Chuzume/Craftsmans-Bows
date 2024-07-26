@@ -5,6 +5,7 @@ import com.chuzbows.interfaces.entity.BypassCooldown;
 import com.chuzbows.interfaces.item.CustomArmPoseItem;
 import com.chuzbows.interfaces.item.CustomFirstPersonRender;
 import com.chuzbows.interfaces.item.CustomUsingMoveItem;
+import com.chuzbows.interfaces.item.ZoomItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -18,7 +19,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, CustomUsingMoveItem, CustomFirstPersonRender {
+public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, CustomUsingMoveItem, CustomFirstPersonRender , ZoomItem {
     public RepeaterCrossbowItem(Item.Settings settings) {
         super(settings);
     }
@@ -26,6 +27,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
     // 変数の定義
     int rapidShot = 0;
     float movementSpeed = 5.0f;
+    float fov;
 
     // 最初の使用時のアクション
     @Override
@@ -38,6 +40,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         // 変数リセット
         rapidShot = 0;
         movementSpeed = 3.0f;
+        fov = 1.0f;
 
         // 値を返す
         return ItemUsage.consumeHeldItem(world, user, hand);
@@ -57,6 +60,12 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         if (movementSpeed <= 0) {
             movementSpeed = 0.0f;
         }
+
+
+        if (rapidShot >= 30) {
+                fov = 0.8f;
+            }
+
 
         // チャージ演出
         if (rapidShot == 15) {
@@ -115,7 +124,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         if (world instanceof ServerWorld) {
             ServerWorld serverWorld = (ServerWorld) world;
             if (!list.isEmpty()) {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 2.5f, 3.0f, false, null);
+                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 2.7f, 3.0f, false, null);
             }
         }
     }
@@ -134,6 +143,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         if (!(user instanceof PlayerEntity playerEntity)) {
             return;
         }
+        fov = Float.NaN;
         rapidShot = 0;
         playerEntity.getItemCooldownManager().set(this, 20);
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
@@ -167,5 +177,15 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         } else {
             return null;
         }
+    }
+
+    @Override
+    public float getFov() {
+        return this.fov;
+    }
+
+    @Override
+    public void resetFov() {
+        fov = Float.NaN;
     }
 }
