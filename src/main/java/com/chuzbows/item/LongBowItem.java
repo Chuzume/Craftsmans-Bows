@@ -1,13 +1,12 @@
 package com.chuzbows.item;
 
-import com.chuzbows.ChuzBowsCore;
 import com.chuzbows.init.ModSoundEvents;
-import com.chuzbows.item_interface.ZoomItem;
+import com.chuzbows.interfaces.item.ZoomItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsage;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.item.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -23,13 +22,12 @@ public class LongBowItem
         super(settings);
     }
 
-    boolean fullCharged;
-    float FOV;
+    float fov;
 
     // 弓を引いた時間を取得する処理
     public static float getPullProgress(int useTicks) {
         float f = (float) useTicks / 20.0f;
-        if ((f = (f * f + f * 2.0f) / 3.0f) > 3.0f) {
+        if ((f = (f * f + f * 2.0f) / 3.0f) > 2.8f) {
             f = 3f;
         }
         return f;
@@ -39,8 +37,7 @@ public class LongBowItem
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 0.7f);
-        FOV = 1f;
-        fullCharged = false;
+        fov = 1f;
         return ItemUsage.consumeHeldItem(world, user, hand);
     }
 
@@ -50,17 +47,11 @@ public class LongBowItem
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
         // ズーム処理
-        FOV = 1.0f - getPullProgress(i) / 5;
+        fov = 1.0f - getPullProgress(i) / 5;
 
         // ズーム停止
-        if (FOV <= 0.5) {
-            FOV = 0.5f;
-        }
-
-        // フルチャージ時にサウンド、フルチャージ済みとして変数をtrueにして連続再生されないようにする
-        if (getPullProgress(i) == 3f && !fullCharged) {
-            user.playSound(SoundEvents.BLOCK_AMETHYST_BLOCK_BREAK, 1.0f, 1.0f);
-            fullCharged = true;
+        if (fov <= 0.5) {
+            fov = 0.5f;
         }
     }
 
@@ -71,7 +62,7 @@ public class LongBowItem
             return;
         }
 
-        FOV = Float.NaN;
+        fov = Float.NaN;
 
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         ItemStack itemStack = playerEntity.getProjectileType(stack);
@@ -90,14 +81,14 @@ public class LongBowItem
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
         if (world instanceof ServerWorld serverWorld) {
             if (!list.isEmpty() && f >= 3) {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 2.5f, 0.0f, true, null);
+                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 2.0f, 0.0f, true, null);
             } else {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 0.5f, 0.0f, f == 0.0f, null);
+                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f, 0.0f, f == 0.0f, null);
             }
             if (f < 3) {
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 0.8f);
             } else {
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.2f);
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 0.7f);
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
             }
@@ -105,12 +96,12 @@ public class LongBowItem
     }
     // インターフェースとして持っておくべきやつ
     @Override
-    public void resetFOV() {
-        FOV = Float.NaN;
+    public void resetFov() {
+        fov = Float.NaN;
     }
 
     @Override
-    public float getFOV() {
-        return this.FOV;
+    public float getFov() {
+        return this.fov;
     }
 }
