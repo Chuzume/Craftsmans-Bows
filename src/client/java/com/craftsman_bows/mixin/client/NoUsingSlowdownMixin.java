@@ -1,6 +1,6 @@
-package com.chuzbows.mixin.client;
+package com.craftsman_bows.mixin.client;
 
-import com.chuzbows.item_interface.CanSprintWhileUsing;
+import com.craftsman_bows.interfaces.item.CanSprintWhileUsing;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 // 右クリックの長押し中だろうがダッシュできるアイテムに関する処理
 
 @Mixin(net.minecraft.client.network.ClientPlayerEntity.class)
-public abstract class UsingItemSprint extends AbstractClientPlayerEntity {
+public abstract class NoUsingSlowdownMixin extends AbstractClientPlayerEntity {
 
     // これはイマイチわかっていない
     @Unique
@@ -36,7 +36,7 @@ public abstract class UsingItemSprint extends AbstractClientPlayerEntity {
     protected abstract boolean canVehicleSprint(Entity vehicle);
 
 
-    public UsingItemSprint(ClientWorld world, GameProfile profile) {
+    public NoUsingSlowdownMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }
 

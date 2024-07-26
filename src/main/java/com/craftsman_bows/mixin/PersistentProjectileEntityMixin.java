@@ -1,6 +1,6 @@
-package com.chuzbows.mixin;
+package com.craftsman_bows.mixin;
 
-import com.chuzbows.interfaces.entity.BypassCooldown;
+import com.craftsman_bows.interfaces.entity.BypassCooldown;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public abstract class PersistentProjectileEntityMixin extends Entity implements BypassCooldown {
 
-    public PersistentProjectileEntityMixin(EntityType<?> type, World world, boolean bypassDamageCooldown) {
+    public PersistentProjectileEntityMixin(EntityType<?> type, World world) {
         super(type, world);
     }
 

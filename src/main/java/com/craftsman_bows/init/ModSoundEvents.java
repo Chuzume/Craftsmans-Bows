@@ -1,6 +1,6 @@
-package com.chuzbows.init;
+package com.craftsman_bows.init;
 
-import com.chuzbows.ChuzBowsCore;
+import com.craftsman_bows.CraftsmanBows;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -12,7 +12,7 @@ public class ModSoundEvents {
     public static final net.minecraft.sound.SoundEvent BOW_CHARGE = registerSoundEvent("bow_charge");
 
     private static net.minecraft.sound.SoundEvent registerSoundEvent(String name) {
-        Identifier id = Identifier.of(ChuzBowsCore.Mod_ID, name);
+        Identifier id = Identifier.of(CraftsmanBows.Mod_ID, name);
         return Registry.register(Registries.SOUND_EVENT, id, net.minecraft.sound.SoundEvent.of(id));
     }
 

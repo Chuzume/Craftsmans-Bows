@@ -1,4 +1,4 @@
-package com.chuzbows.interfaces.entity;
+package com.craftsman_bows.interfaces.entity;
 
 public interface BypassCooldown {
 

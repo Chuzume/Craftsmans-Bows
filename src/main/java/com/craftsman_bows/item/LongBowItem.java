@@ -1,11 +1,9 @@
-package com.chuzbows.item;
+package com.craftsman_bows.item;
 
-import com.chuzbows.init.ModSoundEvents;
-import com.chuzbows.interfaces.item.ZoomItem;
+import com.craftsman_bows.init.ModSoundEvents;
+import com.craftsman_bows.interfaces.item.ZoomItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;

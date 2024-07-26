@@ -1,13 +1,13 @@
-package com.chuzbows.init;
+package com.craftsman_bows.init;
 
-import com.chuzbows.item.*;
+import com.craftsman_bows.item.*;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
-import static com.chuzbows.ChuzBowsCore.Mod_ID;
+import static com.craftsman_bows.CraftsmanBows.Mod_ID;
 
 public class item {
     // 新しいアイテムのインスタンス

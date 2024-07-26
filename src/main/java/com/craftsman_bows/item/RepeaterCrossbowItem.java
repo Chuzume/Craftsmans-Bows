@@ -1,11 +1,11 @@
-package com.chuzbows.item;
+package com.craftsman_bows.item;
 
-import com.chuzbows.init.ModSoundEvents;
-import com.chuzbows.interfaces.entity.BypassCooldown;
-import com.chuzbows.interfaces.item.CustomArmPoseItem;
-import com.chuzbows.interfaces.item.CustomFirstPersonRender;
-import com.chuzbows.interfaces.item.CustomUsingMoveItem;
-import com.chuzbows.interfaces.item.ZoomItem;
+import com.craftsman_bows.init.ModSoundEvents;
+import com.craftsman_bows.interfaces.entity.BypassCooldown;
+import com.craftsman_bows.interfaces.item.CustomArmPoseItem;
+import com.craftsman_bows.interfaces.item.CustomFirstPersonRender;
+import com.craftsman_bows.interfaces.item.CustomUsingMoveItem;
+import com.craftsman_bows.interfaces.item.ZoomItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -91,7 +91,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
 
         // 完了してから一拍置いてから射撃開始
         if (rapidShot >= 50) {
-            this.GatlingShot(world, user, stack, remainingUseTicks);
+            this.GatlingShot(world, user, stack);
         }
     }
 
@@ -102,7 +102,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
 
 
     // 矢を発射する処理
-    public void GatlingShot(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+    public void GatlingShot(World world, LivingEntity user, ItemStack stack) {
 
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         PlayerEntity playerEntity = (PlayerEntity) user;

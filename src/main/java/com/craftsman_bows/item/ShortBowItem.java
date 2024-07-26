@@ -1,6 +1,6 @@
-package com.chuzbows.item;
+package com.craftsman_bows.item;
 
-import com.chuzbows.interfaces.item.CanSprintWhileUsing;
+import com.craftsman_bows.interfaces.item.CanSprintWhileUsing;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -10,7 +10,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import com.chuzbows.init.ModSoundEvents;
+import com.craftsman_bows.init.ModSoundEvents;
 
 import java.util.List;
 

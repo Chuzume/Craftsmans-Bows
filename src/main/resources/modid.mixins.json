@@ -1,13 +1,11 @@
 {
   "required": true,
-  "package": "com.chuzbows.mixin",
+  "package": "com.craftsman_bows.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ChuzBowsMixin"
+    "PersistentProjectileEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "client": [
-  ]
+  }
 }

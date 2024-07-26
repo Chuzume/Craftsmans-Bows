@@ -1,9 +1,9 @@
-package com.chuzbows.item;
+package com.craftsman_bows.item;
 
-import com.chuzbows.interfaces.entity.BypassCooldown;
-import com.chuzbows.init.ModSoundEvents;
-import com.chuzbows.interfaces.item.CustomArmPoseItem;
-import com.chuzbows.interfaces.item.CustomUsingMoveItem;
+import com.craftsman_bows.interfaces.entity.BypassCooldown;
+import com.craftsman_bows.init.ModSoundEvents;
+import com.craftsman_bows.interfaces.item.CustomArmPoseItem;
+import com.craftsman_bows.interfaces.item.CustomUsingMoveItem;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,7 +17,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -35,9 +34,8 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
     // 最初の使用時のアクション
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        boolean bl;
         ItemStack itemStack = user.getStackInHand(hand);
-        boolean bl2 = bl = !user.getProjectileType(itemStack).isEmpty();
+        boolean bl = !user.getProjectileType(itemStack).isEmpty();
         if (user.isInCreativeMode() || bl) {
             fullCharged = false;
             user.setCurrentHand(hand);
@@ -66,7 +64,7 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         }
     }
 
-    protected ProjectileEntity createShotArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, float divergence, boolean critical, boolean pickup) {
+    protected ProjectileEntity createShotArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean pickup) {
         Item item = projectileStack.getItem();
         ArrowItem arrowItem2 = item instanceof ArrowItem ? (ArrowItem) item : (ArrowItem) Items.ARROW;
         PersistentProjectileEntity persistentProjectileEntity = arrowItem2.createArrow(world, projectileStack, shooter, weaponStack);
@@ -83,7 +81,7 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         return UseAction.NONE;
     }
 
-    protected void shootArrow(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float divergence, boolean pickup, @Nullable LivingEntity target) {
+    protected void shootArrow(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float divergence, boolean pickup) {
         float f = EnchantmentHelper.getProjectileSpread(world, stack, shooter, 0.0f);
         float g = projectiles.size() == 1 ? 0.0f : 2.0f * f / (float) (projectiles.size() - 1);
         float h = (float) ((projectiles.size() - 1) % 2) * g / 2.0f;
@@ -93,8 +91,8 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
             if (itemStack.isEmpty()) continue;
             float k = h + i * (float) ((j + 1) / 2) * g;
             i = -i;
-            ProjectileEntity projectileEntity = this.createShotArrowEntity(world, shooter, stack, itemStack, divergence,true,pickup);
-            this.shoot(shooter, projectileEntity, j, 1.2f, divergence, k, target);
+            ProjectileEntity projectileEntity = this.createShotArrowEntity(world, shooter, stack, itemStack, pickup);
+            this.shoot(shooter, projectileEntity, j, 1.2f, divergence, k, null);
             world.spawnEntity(projectileEntity);
             stack.damage(this.getWeaponStackDamage(itemStack), shooter, LivingEntity.getSlotForHand(hand));
             if (stack.isEmpty()) break;
@@ -128,11 +126,11 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
 
         if (world instanceof ServerWorld serverWorld) {
             if (!list.isEmpty()) {
-                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 0.0f, true, null);
-                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false, null);
-                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false, null);
-                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false, null);
-                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false, null);
+                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 0.0f, true);
+                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
+                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
+                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
+                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
             }
         }
 
