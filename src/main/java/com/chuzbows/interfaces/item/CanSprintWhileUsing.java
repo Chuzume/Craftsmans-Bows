@@ -1,4 +1,4 @@
-package com.chuzbows.item_interface;
+package com.chuzbows.interfaces.item;
 
 public interface CanSprintWhileUsing {
 }
