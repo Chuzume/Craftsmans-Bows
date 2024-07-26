@@ -13,12 +13,12 @@
         }
     },
     "pattern": [
-        "g/S",
-        "/ S",
-        "g/S"
+        " g",
+        "/S",
+        " g"
     ],
     "result": {
-        "id": "chuzbows:longbow",
+        "id": "craftsman_bows:shortbow",
         "count": 1
     }
 }

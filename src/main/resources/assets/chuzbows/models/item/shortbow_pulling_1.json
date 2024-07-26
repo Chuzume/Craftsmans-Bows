@@ -1,6 +1,6 @@
 {
     "parent": "item/bow",
     "textures": {
-        "layer0": "chuzbows:item/shortbow_pulling_1"
+        "layer0": "craftsman_bows:item/shortbow_pulling_1"
     }
 }

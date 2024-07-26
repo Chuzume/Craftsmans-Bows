@@ -1,6 +1,6 @@
 {
   "parent": "item/crossbow",
   "textures": {
-    "layer0": "chuzbows:item/repeater_crossbow_shoot"
+    "layer0": "craftsman_bows:item/repeater_crossbow_shoot"
   }
 }

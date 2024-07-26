@@ -1,28 +1,28 @@
 {
     "parent": "item/bow",
     "textures": {
-        "layer0": "chuzbows:item/shortbow"
+        "layer0": "craftsman_bows:item/shortbow"
     },
     "overrides": [
         {
             "predicate": {
                 "pulling": 1
             },
-            "model": "chuzbows:item/shortbow_pulling_0"
+            "model": "craftsman_bows:item/shortbow_pulling_0"
         },
         {
             "predicate": {
                 "pulling": 1,
                 "pull": 0.25
             },
-            "model": "chuzbows:item/shortbow_pulling_1"
+            "model": "craftsman_bows:item/shortbow_pulling_1"
         },
         {
             "predicate": {
                 "pulling": 1,
                 "pull": 0.5
             },
-            "model": "chuzbows:item/shortbow_pulling_2"
+            "model": "craftsman_bows:item/shortbow_pulling_2"
         }
     ]
 }
