@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "craftsman_bows",
 	"version": "1.0.0",
 	"name": "Craftsman's bows",
 	"description": "There are shortbow that are easy to use, longbow that are great for sniping, and crossbows that you have no idea how they work...",
@@ -23,9 +23,9 @@
 		]
 	},
 	"mixins": [
-		"modid.mixins.json",
+		"craftsman_bows.mixins.json",
 		{
-			"config": "modid.client.mixins.json",
+			"config": "craftsman_bows.client.mixins.json",
 			"environment": "client"
 		}
 	],
