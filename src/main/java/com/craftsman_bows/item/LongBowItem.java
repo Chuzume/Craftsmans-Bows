@@ -47,12 +47,8 @@ public class LongBowItem
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
         // ズーム処理
-        fov = 1.0f - getPullProgress(i) / 5;
+        fov = 1.0f - getPullProgress(i) / 2.0f;
 
-        // ズーム停止
-        if (fov <= 0.5) {
-            fov = 0.5f;
-        }
     }
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
@@ -89,7 +85,7 @@ public class LongBowItem
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 0.8f);
             } else {
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.4f);
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 0.9f);
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 0.7f);
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
             }
         }
