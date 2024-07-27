@@ -37,5 +37,4 @@ public class item {
             content.add(REPEATER_CROSSBOW);
         });
     }
-
 }

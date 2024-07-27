@@ -24,12 +24,14 @@ public class LongBowItem
 
     // 弓を引いた時間を取得する処理
     public static float getPullProgress(int useTicks) {
-        float f = (float) useTicks / 20.0f;
-        if ((f = (f * f + f * 2.0f) / 3.0f) > 2.8f) {
-            f = 3f;
+        float f = (float) useTicks / 40.0F;
+        f = (f * f + f * 2.0F) / 3.0F;
+        if (f > 1.0F) {
+            f = 1.0F;
         }
         return f;
     }
+
 
     // 最初の使用時のアクション
     @Override
@@ -78,20 +80,21 @@ public class LongBowItem
         // ここが放つ処理に見える。
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
         if (world instanceof ServerWorld serverWorld) {
-            if (!list.isEmpty() && f >= 3) {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 2.0f, 0.0f, true, null);
+            if (!list.isEmpty() && f >= 1) {
+                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 6.0f, 0.0f, true, null);
             } else {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f, 0.0f, f == 0.0f, null);
+                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 2.0f, 0.0f, f == 0.0f, null);
             }
-            if (f < 3) {
+            if (f < 1) {
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 0.8f);
             } else {
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.2f);
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 0.7f);
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.4f);
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 0.9f);
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
             }
         }
     }
+
     // インターフェースとして持っておくべきやつ
     @Override
     public void resetFov() {
