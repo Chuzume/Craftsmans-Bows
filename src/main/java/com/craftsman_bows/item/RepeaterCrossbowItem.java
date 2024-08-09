@@ -40,7 +40,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         // 変数リセット
         rapidShot = 0;
         movementSpeed = 3.0f;
-        fov = 1.0f;
+        fov = Float.NaN;
 
         // 値を返す
         return ItemUsage.consumeHeldItem(world, user, hand);
