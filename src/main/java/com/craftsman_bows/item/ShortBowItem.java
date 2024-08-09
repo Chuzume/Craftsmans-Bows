@@ -41,11 +41,6 @@ public class ShortBowItem extends BowItem implements CanSprintWhileUsing {
         return TypedActionResult.fail(itemStack);
     }
 
-    // アイテムを使用しているときの処理？
-    @Override
-    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-    }
-
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
