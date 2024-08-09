@@ -68,7 +68,7 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         Item item = projectileStack.getItem();
         ArrowItem arrowItem2 = item instanceof ArrowItem ? (ArrowItem) item : (ArrowItem) Items.ARROW;
         PersistentProjectileEntity persistentProjectileEntity = arrowItem2.createArrow(world, projectileStack, shooter, weaponStack);
-        ((BypassCooldown) persistentProjectileEntity).setBypassDamageCooldown();
+        persistentProjectileEntity.setBypassDamageCooldown();
         persistentProjectileEntity.setCritical(true);
         if (!pickup) {
             persistentProjectileEntity.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
