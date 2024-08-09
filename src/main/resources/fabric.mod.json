@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "craftsman_bows",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"name": "Craftsman's bows",
 	"description": "Add some vanilla-like bows.",
 	"authors": [
@@ -31,7 +31,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.11",
-		"minecraft": "1.21",
+		"minecraft": ">=1.21",
 		"java": ">=21",
 		"fabric-api": "*"
 	},
