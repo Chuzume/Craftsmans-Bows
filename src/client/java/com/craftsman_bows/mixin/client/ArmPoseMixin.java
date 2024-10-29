@@ -13,19 +13,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(net.minecraft.client.render.entity.PlayerEntityRenderer.class)
 
 public class ArmPoseMixin {
-    @Inject(method = "getArmPose", at = @At("TAIL"), cancellable = true)
-    private static void getArmPose(AbstractClientPlayerEntity player, Hand hand, CallbackInfoReturnable<BipedEntityModel.ArmPose> cir ) {
-
-        ItemStack itemStack = player.getStackInHand(hand);
-
-        if (itemStack.getItem() instanceof CustomArmPoseItem customArmPoseItem) {
-            String standbyArmPose = customArmPoseItem.getStandbyArmPose();
-            cir.setReturnValue(BipedEntityModel.ArmPose.valueOf(standbyArmPose));
-        }
-
-        if (itemStack.getItem() instanceof CustomArmPoseItem customArmPoseItem && player.getItemUseTimeLeft() > 0) {
-            String standbyArmPose = customArmPoseItem.getUsingArmPose();
-            cir.setReturnValue(BipedEntityModel.ArmPose.valueOf(standbyArmPose));
-        }
-    }
+//    @Inject(method = "getArmPose", at = @At("TAIL"), cancellable = true)
+//    private static void getArmPose(AbstractClientPlayerEntity player, Hand hand, CallbackInfoReturnable<BipedEntityModel.ArmPose> cir ) {
+//
+//        ItemStack itemStack = player.getStackInHand(hand);
+//
+//        if (itemStack.getItem() instanceof CustomArmPoseItem customArmPoseItem) {
+//            String standbyArmPose = customArmPoseItem.getStandbyArmPose();
+//            cir.setReturnValue(BipedEntityModel.ArmPose.valueOf(standbyArmPose));
+//        }
+//
+//        if (itemStack.getItem() instanceof CustomArmPoseItem customArmPoseItem && player.getItemUseTimeLeft() > 0) {
+//            String standbyArmPose = customArmPoseItem.getUsingArmPose();
+//            cir.setReturnValue(BipedEntityModel.ArmPose.valueOf(standbyArmPose));
+//        }
+//    }
 }

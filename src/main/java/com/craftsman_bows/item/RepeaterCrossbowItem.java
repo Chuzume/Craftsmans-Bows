@@ -148,7 +148,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         playerEntity.getItemCooldownManager().set(stack, 20);
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
-        return false;
+        return true;
     }
 
     // インターフェースが欲しがってる処理

@@ -68,6 +68,6 @@ public class ShortBowItem extends BowItem implements CanSprintWhileUsing {
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
             }
         }
-        return false;
+        return true;
     }
 }

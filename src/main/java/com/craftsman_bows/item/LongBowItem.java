@@ -89,7 +89,7 @@ public class LongBowItem
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
             }
         }
-        return false;
+        return true;
     }
 
     // インターフェースとして持っておくべきやつ

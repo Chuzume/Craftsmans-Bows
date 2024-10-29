@@ -145,7 +145,7 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
             // 現在のアクティブな手がオフハンドなら、オフハンドを振る
             user.swingHand(Hand.OFF_HAND);
         }
-        return false;
+        return true;
     }
 
     // インターフェース「CustomUsingMoveItem」として必要な処理
