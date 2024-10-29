@@ -13,8 +13,8 @@ import net.minecraft.item.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ActionResult;
-import net.minecraft.item.consume.UseAction;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
 
     // 最初の使用時のアクション
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 
         // サウンド
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
@@ -139,16 +139,15 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
-    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         if (!(user instanceof PlayerEntity playerEntity)) {
-            return false;
+            return;
         }
         fov = Float.NaN;
         rapidShot = 0;
-        playerEntity.getItemCooldownManager().set(stack, 20);
+        playerEntity.getItemCooldownManager().set(this, 20);
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
-        return false;
     }
 
     // インターフェースが欲しがってる処理

@@ -9,14 +9,14 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import java.util.List;
 
 public class LongBowItem
         extends BowItem implements ZoomItem {
-    public LongBowItem(Settings settings) {
+    public LongBowItem(net.minecraft.item.Item.Settings settings) {
         super(settings);
     }
 
@@ -35,7 +35,7 @@ public class LongBowItem
 
     // 最初の使用時のアクション
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 0.7f);
         fov = 1f;
         return ItemUsage.consumeHeldItem(world, user, hand);
@@ -53,9 +53,9 @@ public class LongBowItem
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
-    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         if (!(user instanceof PlayerEntity playerEntity)) {
-            return false;
+            return;
         }
 
         fov = Float.NaN;
@@ -63,14 +63,14 @@ public class LongBowItem
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         ItemStack itemStack = playerEntity.getProjectileType(stack);
         if (itemStack.isEmpty()) {
-            return false;
+            return;
         }
 
         // 使用時間0.1未満では使用をキャンセルする処理のようだ
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
         float f = getPullProgress(i);
         if ((double) f < 0.1) {
-            return false;
+            return;
         }
 
         // ここが放つ処理に見える。
@@ -89,7 +89,6 @@ public class LongBowItem
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
             }
         }
-        return false;
     }
 
     // インターフェースとして持っておくべきやつ

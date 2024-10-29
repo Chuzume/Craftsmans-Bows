@@ -44,7 +44,7 @@ public abstract class NoUsingSlowdownMixin extends AbstractClientPlayerEntity {
     @Inject(method = "canStartSprinting", at = @At("TAIL"), cancellable = true)
     private void canStartSprinting(CallbackInfoReturnable<Boolean> cir) {
         ItemStack itemStack = target.getActiveItem();
-        cir.setReturnValue(!this.isSprinting() && this.isWalking() && this.canSprint() && (!this.isUsingItem() || itemStack.getItem() instanceof CanSprintWhileUsing) && !this.hasStatusEffect(StatusEffects.BLINDNESS) && (!this.hasVehicle() || this.canVehicleSprint(this.getVehicle())) && !this.isFallFlying());
+        cir.setReturnValue(!this.isSprinting() && this.isWalking() && this.canSprint() && (!this.isUsingItem() || itemStack.getItem() instanceof CanSprintWhileUsing) && !this.hasStatusEffect(StatusEffects.BLINDNESS) && (!this.hasVehicle() || this.canVehicleSprint(this.getVehicle())) && !this.isGliding());
     }
 
     // アイテム使用中はダブルタップでダッシュできなくなるって処理を「CanSprintWhileUsing」インターフェースのアイテムなら無視するようにした。もっといいやり方がある気がする。

@@ -1,5 +1,6 @@
 package com.craftsman_bows.item;
 
+import com.craftsman_bows.interfaces.entity.BypassCooldown;
 import com.craftsman_bows.init.ModSoundEvents;
 import com.craftsman_bows.interfaces.item.CustomArmPoseItem;
 import com.craftsman_bows.interfaces.item.CustomUsingMoveItem;
@@ -13,14 +14,14 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ActionResult;
-import net.minecraft.item.consume.UseAction;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 
 import java.util.List;
 
 public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, CustomArmPoseItem {
-    public ShotCrossbowItem(Settings settings) {
+    public ShotCrossbowItem(net.minecraft.item.Item.Settings settings) {
         super(settings);
     }
 
@@ -32,16 +33,16 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
 
     // 最初の使用時のアクション
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         boolean bl = !user.getProjectileType(itemStack).isEmpty();
         if (user.isInCreativeMode() || bl) {
             fullCharged = false;
             user.setCurrentHand(hand);
             user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 1.25f);
-            return ActionResult.CONSUME;
+            return TypedActionResult.consume(itemStack);
         }
-        return ActionResult.FAIL;
+        return TypedActionResult.fail(itemStack);
     }
 
     // アイテムを使用しているときの処理？
@@ -100,23 +101,23 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
-    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         if (!(user instanceof PlayerEntity)) {
-            return false;
+            return;
         }
 
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         PlayerEntity playerEntity = (PlayerEntity) user;
         ItemStack itemStack = playerEntity.getProjectileType(stack);
         if (itemStack.isEmpty()) {
-            return false;
+            return;
         }
 
         // 使用時間0.1未満では使用をキャンセルする処理のようだ
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
         float f = getPullProgress(i);
         if ((double) f < 1) {
-            return false;
+            return;
         }
 
         // ここが放つ処理に見える。
@@ -145,7 +146,6 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
             // 現在のアクティブな手がオフハンドなら、オフハンドを振る
             user.swingHand(Hand.OFF_HAND);
         }
-        return false;
     }
 
     // インターフェース「CustomUsingMoveItem」として必要な処理
