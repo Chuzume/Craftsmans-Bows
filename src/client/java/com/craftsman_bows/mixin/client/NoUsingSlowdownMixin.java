@@ -35,7 +35,6 @@ public abstract class NoUsingSlowdownMixin extends AbstractClientPlayerEntity {
     @Shadow
     protected abstract boolean canVehicleSprint(Entity vehicle);
 
-
     public NoUsingSlowdownMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }

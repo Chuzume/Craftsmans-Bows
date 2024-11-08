@@ -15,12 +15,14 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class LongBowItem
-        extends BowItem implements ZoomItem {
+        extends CraftsmanBowItem implements ZoomItem {
+
     public LongBowItem(Settings settings) {
         super(settings);
     }
 
     float fov;
+    boolean fullCharged;
 
     // 弓を引いた時間を取得する処理
     public static float getPullProgress(int useTicks) {
@@ -32,12 +34,12 @@ public class LongBowItem
         return f;
     }
 
-
     // 最初の使用時のアクション
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
         user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 0.7f);
         fov = 1f;
+        fullCharged = false;
         return ItemUsage.consumeHeldItem(world, user, hand);
     }
 
@@ -46,9 +48,19 @@ public class LongBowItem
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
+        // チャージ中
+        if (getPullProgress(i) <= 1.0F && !fullCharged) {
+            chargingParticle(world, user);  // パーティクル生成の処理
+        }
+
+        // チャージが完了しているか確認し、完了時に一度だけ処理を実行
+        if (getPullProgress(i) >= 1.0F && !fullCharged) {
+            fullCharged = true;  // 一度だけ実行するためにフラグを設定
+            chargeEndParticle(world, user);  // パーティクル生成の処理
+        }
+
         // ズーム処理
         fov = 1.0f - getPullProgress(i) / 2.0f;
-
     }
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
@@ -59,6 +71,10 @@ public class LongBowItem
         }
 
         fov = Float.NaN;
+        fullCharged = false;
+
+        // パーティクル
+        shootParticle(world, user);
 
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         ItemStack itemStack = playerEntity.getProjectileType(stack);

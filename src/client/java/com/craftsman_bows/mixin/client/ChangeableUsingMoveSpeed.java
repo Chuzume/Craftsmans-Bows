@@ -14,6 +14,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+// アイテム使用中の移動速度を変更できる処理
+
 @Mixin(net.minecraft.client.network.ClientPlayerEntity.class)
 public abstract class ChangeableUsingMoveSpeed extends AbstractClientPlayerEntity {
 

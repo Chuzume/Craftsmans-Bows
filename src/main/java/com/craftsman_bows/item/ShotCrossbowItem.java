@@ -2,6 +2,7 @@ package com.craftsman_bows.item;
 
 import com.craftsman_bows.init.ModSoundEvents;
 import com.craftsman_bows.interfaces.item.CustomArmPoseItem;
+import com.craftsman_bows.interfaces.item.CustomFirstPersonRender;
 import com.craftsman_bows.interfaces.item.CustomUsingMoveItem;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
@@ -15,11 +16,13 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ActionResult;
 import net.minecraft.item.consume.UseAction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import com.craftsman_bows.init.ModParticle;
 
 import java.util.List;
 
-public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, CustomArmPoseItem {
+public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, CustomArmPoseItem , CustomFirstPersonRender{
     public ShotCrossbowItem(Settings settings) {
         super(settings);
     }
@@ -27,8 +30,8 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
     // 変数
     boolean fullCharged;
     float movementSpeed = 2.5f;
-    String standbyArmPose = "CROSSBOW_HOLD";
     String usingArmPose = "CROSSBOW_CHARGE";
+    String usingFirstPerson = "CROSSBOW_CHARGE";
 
     // 最初の使用時のアクション
     @Override
@@ -53,13 +56,17 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         // 腕のポーズ変更
         if (getPullProgress(i) < 1.0) {
             usingArmPose = "CROSSBOW_CHARGE";
+            usingFirstPerson = "CROSSBOW_CHARGE";
         } else {
             usingArmPose = "CROSSBOW_HOLD";
+            usingFirstPerson = "CROSSBOW_HOLD";
         }
         if (getPullProgress(i) > 0.9 && !fullCharged) {
             fullCharged = true;
             user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_XYLOPHONE.value(), 1.0f, 1.5f);
             user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
+            this.spawnParticles(world, user);
+
         }
     }
 
@@ -75,9 +82,36 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         return persistentProjectileEntity;
     }
 
+    private void spawnParticles(World world, LivingEntity player) {
+        // プレイヤーの視線方向を取得
+        Vec3d lookDirection = player.getRotationVec(1.0F);
+
+        // プレイヤーの視線先の位置を計算
+        double distance = 2.0;
+        double particleX = player.getX() + lookDirection.x * distance;
+        double particleY = player.getEyeY() + lookDirection.y * distance; // 目の高さ
+        double particleZ = player.getZ() + lookDirection.z * distance;
+
+        // パーティクルを複数発生させるループ
+        for (int i = 0; i < 20; i++) {
+            double offsetX = (world.random.nextDouble() - 0.5) * 0.1;
+            double offsetY = (world.random.nextDouble() - 0.5) * 1;
+            double offsetZ = (world.random.nextDouble() - 0.5) * 0.1;
+
+            // 視線の先にパーティクルを追加
+            world.addParticle(ModParticle.SPARKLE_PARTICLE,
+                    particleX, particleY, particleZ,
+                    offsetX, offsetY, offsetZ);
+        }
+    }
+
     @Override
     public UseAction getUseAction(ItemStack stack) {
-        return UseAction.NONE;
+        if (fullCharged) {
+            return UseAction.NONE;
+        } else {
+            return UseAction.CROSSBOW;
+        }
     }
 
     protected void shootArrow(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float divergence, boolean pickup) {
@@ -122,7 +156,6 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         // ここが放つ処理に見える。
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
 
-
         if (world instanceof ServerWorld serverWorld) {
             if (!list.isEmpty()) {
                 this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 0.0f, true);
@@ -137,14 +170,15 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
 
         // 腕振る処理
-        Hand activeHand = user.getActiveHand();
-        if (activeHand == Hand.MAIN_HAND) {
-            // 現在のアクティブな手がメインハンドなら、メインハンドを振る
-            user.swingHand(Hand.MAIN_HAND);
-        } else if (activeHand == Hand.OFF_HAND) {
-            // 現在のアクティブな手がオフハンドなら、オフハンドを振る
-            user.swingHand(Hand.OFF_HAND);
-        }
+        //Hand activeHand = user.getActiveHand();
+        //if (activeHand == Hand.MAIN_HAND) {
+        //    // 現在のアクティブな手がメインハンドなら、メインハンドを振る
+        //    user.swingHand(Hand.MAIN_HAND);
+        //} else if (activeHand == Hand.OFF_HAND) {
+        //    // 現在のアクティブな手がオフハンドなら、オフハンドを振る
+        //    user.swingHand(Hand.OFF_HAND);
+        //}
+        usingFirstPerson = null;
         return true;
     }
 
@@ -159,6 +193,11 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         movementSpeed = Float.NaN;
     }
 
+    @Override
+    public String getFirstPersonRender() {
+        return usingFirstPerson;
+    }
+
     // インターフェス「CustomArmPoseItem」として必要な処理
     @Override
     public String getUsingArmPose() {
@@ -167,6 +206,6 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
 
     @Override
     public String getStandbyArmPose() {
-        return standbyArmPose;
+        return null;
     }
 }

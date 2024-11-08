@@ -14,10 +14,12 @@ import com.craftsman_bows.init.ModSoundEvents;
 
 import java.util.List;
 
-public class ShortBowItem extends BowItem implements CanSprintWhileUsing {
+public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsing {
     public ShortBowItem(Settings settings) {
         super(settings);
     }
+
+    boolean fullCharged;
 
     // 弓を引いた時間を取得する処理のようだ。今回は書き換えて、0.55以上引き絞ったら強制的に1（フルチャージ）になるようにした
     public static float getPullProgress(int useTicks) {
@@ -26,6 +28,23 @@ public class ShortBowItem extends BowItem implements CanSprintWhileUsing {
             f = 1f;
         }
         return f;
+    }
+
+    // アイテムを使用しているときの処理
+    @Override
+    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+        int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
+
+        // チャージ中
+        if (getPullProgress(i) <= 1.0F && !fullCharged) {
+            chargingParticle(world, user);  // パーティクル生成の処理
+        }
+
+        // チャージが完了しているか確認し、完了時に一度だけ処理を実行
+        if (getPullProgress(i) >= 1.0F && !fullCharged) {
+            fullCharged = true;  // 一度だけ実行するためにフラグを設定
+            chargeEndParticle(world, user);  // パーティクル生成の処理
+        }
     }
 
     // 最初の使用時のアクション
@@ -38,9 +57,16 @@ public class ShortBowItem extends BowItem implements CanSprintWhileUsing {
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
     public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+
         if (!(user instanceof PlayerEntity playerEntity)) {
             return false;
         }
+
+        // チャージリセット
+        fullCharged = false;
+
+        // パーティクル
+        shootParticle(world, user);
 
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         ItemStack itemStack = playerEntity.getProjectileType(stack);
