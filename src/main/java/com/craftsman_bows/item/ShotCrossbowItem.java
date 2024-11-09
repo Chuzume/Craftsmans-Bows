@@ -94,9 +94,9 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
 
         // パーティクルを複数発生させるループ
         for (int i = 0; i < 20; i++) {
-            double offsetX = (world.random.nextDouble() - 0.5) * 0.1;
+            double offsetX = (world.random.nextDouble() - 0.5) * 1;
             double offsetY = (world.random.nextDouble() - 0.5) * 1;
-            double offsetZ = (world.random.nextDouble() - 0.5) * 0.1;
+            double offsetZ = (world.random.nextDouble() - 0.5) * 1;
 
             // 視線の先にパーティクルを追加
             world.addParticle(ModParticle.SPARKLE_PARTICLE,
