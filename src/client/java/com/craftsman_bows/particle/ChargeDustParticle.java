@@ -8,28 +8,24 @@ import net.minecraft.particle.SimpleParticleType;
 
 @Environment(EnvType.CLIENT)
 public class ChargeDustParticle extends SpriteBillboardParticle {
-    private final double startX;
-    private final double startY;
-    private final double startZ;
+    private final double targetX;
+    private final double targetY;
+    private final double targetZ;
 
-    protected ChargeDustParticle(ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
-        super(clientWorld, d, e, f);
-        this.velocityX = g;
-        this.velocityY = h;
-        this.velocityZ = i;
-        this.x = d;
-        this.y = e;
-        this.z = f;
-        this.startX = this.x;
-        this.startY = this.y;
-        this.startZ = this.z;
-        this.scale = 0.2F * this.random.nextFloat();;
-        //float j = this.random.nextFloat() * 0.6F + 0.4F;
-        //this.red = j * 0.9F;
-        //this.green = j * 0.3F;
-        //this.blue = j;
-        this.maxAge = (int)(Math.random() * 10.0) + 40;
+    protected ChargeDustParticle(ClientWorld clientWorld,
+                                 double startX, double startY, double startZ,
+                                 double targetX, double targetY, double targetZ) {
+        super(clientWorld, startX, startY, startZ);
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.targetZ = targetZ;
 
+        this.scale = 0.1F * (this.random.nextFloat() * 0.2F + 0.5F);
+        float j = this.random.nextFloat() * 0.6F + 0.4F;
+        this.red = j * 0.9f;
+        this.green = j * 0.7f;
+        this.blue = j * 0.2f;
+        this.maxAge = 5;
     }
 
     @Override
@@ -44,15 +40,6 @@ public class ChargeDustParticle extends SpriteBillboardParticle {
     }
 
     @Override
-    public float getSize(float tickDelta) {
-        float f = ((float)this.age + tickDelta) / (float)this.maxAge;
-        f = 1.0F - f;
-        f *= f;
-        f = 1.0F - f;
-        return this.scale;
-    }
-
-    @Override
     public int getBrightness(float tint) {
         return 15728880;
     }
@@ -62,15 +49,31 @@ public class ChargeDustParticle extends SpriteBillboardParticle {
         this.prevPosX = this.x;
         this.prevPosY = this.y;
         this.prevPosZ = this.z;
+
         if (this.age++ >= this.maxAge) {
             this.markDead();
         } else {
-            float f = (float)this.age / (float)this.maxAge;
-            float var3 = -f + f * f * 2.0F;
-            float var4 = 1.0F - var3;
-            this.x = this.startX + this.velocityX * (double)var4;
-            this.y = this.startY + this.velocityY * (double)var4;
-            this.z = this.startZ + this.velocityZ * (double)var4;
+            double directionX = targetX - this.x;
+            double directionY = targetY - this.y;
+            double directionZ = targetZ - this.z;
+
+            double distance = Math.sqrt(directionX * directionX + directionY * directionY + directionZ * directionZ);
+
+            if (distance > 0.1) {
+                directionX /= distance;
+                directionY /= distance;
+                directionZ /= distance;
+
+                // 収束する速度
+                double speed = 0.2;
+                this.x += directionX * speed;
+                this.y += directionY * speed;
+                this.z += directionZ * speed;
+            } else {
+                this.x = targetX;
+                this.y = targetY;
+                this.z = targetZ;
+            }
         }
     }
 
@@ -82,10 +85,11 @@ public class ChargeDustParticle extends SpriteBillboardParticle {
             this.spriteProvider = spriteProvider;
         }
 
-        public Particle createParticle(SimpleParticleType simpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
-            ChargeDustParticle ChargeDustParticle = new ChargeDustParticle(clientWorld, d, e, f, g, h, i);
-            ChargeDustParticle.setSprite(this.spriteProvider);
-            return ChargeDustParticle;
+        @Override
+        public Particle createParticle(SimpleParticleType type, ClientWorld world, double startX, double startY, double startZ, double targetX, double targetY, double targetZ) {
+            ChargeDustParticle particle = new ChargeDustParticle(world, startX, startY, startZ, targetX, targetY, targetZ);
+            particle.setSprite(this.spriteProvider);
+            return particle;
         }
     }
 }

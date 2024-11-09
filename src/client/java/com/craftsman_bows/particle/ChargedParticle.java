@@ -25,6 +25,8 @@ public class ChargedParticle extends AnimatedParticle {
             this.spriteProvider = spriteProvider;
         }
 
+
+
         public Particle createParticle(SimpleParticleType simpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             return new ChargedParticle(clientWorld, d, e, f, g, this.spriteProvider);
         }
