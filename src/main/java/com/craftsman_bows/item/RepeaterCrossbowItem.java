@@ -1,5 +1,6 @@
 package com.craftsman_bows.item;
 
+import com.craftsman_bows.init.ModParticle;
 import com.craftsman_bows.init.ModSoundEvents;
 import com.craftsman_bows.interfaces.entity.BypassCooldown;
 import com.craftsman_bows.interfaces.item.CustomArmPoseItem;
@@ -16,6 +17,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ActionResult;
 import net.minecraft.item.consume.UseAction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -44,6 +46,14 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         movementSpeed = 3.0f;
         fov = Float.NaN;
 
+        // 腕振る処理
+        Hand activeHand = user.getActiveHand();
+        if (activeHand == Hand.MAIN_HAND) {
+            user.swingHand(Hand.OFF_HAND);
+        } else if (activeHand == Hand.OFF_HAND) {
+            user.swingHand(Hand.MAIN_HAND);
+        }
+
         // 値を返す
         return ItemUsage.consumeHeldItem(world, user, hand);
     }
@@ -64,10 +74,52 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         }
 
         if (useTick >= 30) {
-                fov = 0.8f;
-            }
+            fov = 0.8f;
+        }
 
         // チャージ演出
+        if (useTick <= 32) {
+            // プレイヤーの視線方向を取得
+            Vec3d lookDirection = user.getRotationVec(1.0F);
+
+            // オフセット
+            double offsetUp = -0.3; // 上に0.1ブロック分オフセット
+
+            // ベクトルを取得
+            Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+            Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
+
+            // 出現位置の範囲を設定
+            double rangeX = 1.5;
+            double rangeY = 1.5;
+            double rangeZ = 1.5;
+
+            // 目標位置（収束先）を設定
+            double distanceToTarget = 0.9; // プレイヤーから目標地点までの距離
+            double targetX = user.getX() + lookDirection.x * distanceToTarget + verticalDirection.x * offsetUp;
+            double targetY = user.getEyeY() + lookDirection.y * distanceToTarget + verticalDirection.y * offsetUp;
+            double targetZ = user.getZ() + lookDirection.z * distanceToTarget + verticalDirection.x * offsetUp;
+
+            // 複数のパーティクルを発生させるループ
+            for (int i = 0; i < 1; i++) {
+                // 視線方向に基づいた初期位置にランダムな偏差を加える
+                double particleX = user.getX() + lookDirection.x * 2.0
+                        + verticalDirection.x * offsetUp
+                        + (world.random.nextDouble() - 0.5) * rangeX;
+
+                double particleY = user.getEyeY() + lookDirection.y * 2.0
+                        + verticalDirection.y * offsetUp
+                        + (world.random.nextDouble() - 0.5) * rangeY;
+
+                double particleZ = user.getZ() + lookDirection.z * 2.0
+                        + verticalDirection.z * offsetUp
+                        + (world.random.nextDouble() - 0.5) * rangeZ;
+
+                // パーティクルを追加し、収束先を設定
+                world.addParticle(ModParticle.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
+            }
+        }
+
         if (useTick == 15) {
             user.playSound(SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON, 1.0f, 1.0f);
         }
@@ -88,20 +140,45 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
             user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_XYLOPHONE.value(), 1.0f, 1.5f);
         }
-
-        // 完了してから一拍置いてから射撃開始
+        // 完了して一拍置いてから射撃開始
         if (useTick >= 50) {
             this.GatlingShot(world, user, stack);
         }
-
         // あんまり長いこと撃ってると煙を吹き出す
-        if (useTick >= 82){
-            this.spawnAlertParticles(world,user);
+        if (useTick == 82) {
+            user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 2.0f);
+        }
+        if (useTick >= 82) {
+            this.spawnAlertParticles(world, user);
+        }
+        // それでも撃ち続けるとオーバーヒートする
+        if (useTick >= 102) {
+            // サウンド
+            user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 1.5f);
+            user.playSound(SoundEvents.ENTITY_ITEM_BREAK, 1.0f, 1f);
+            user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
+
+            // 吹っ飛ぶ
+            float g = user.getYaw();
+            float h = user.getPitch();
+            float j = -MathHelper.sin(g * (float) (Math.PI / 180.0)) * MathHelper.cos(h * (float) (Math.PI / 180.0));
+            float k = -MathHelper.sin(h * (float) (Math.PI / 180.0));
+            float l = MathHelper.cos(g * (float) (Math.PI / 180.0)) * MathHelper.cos(h * (float) (Math.PI / 180.0));
+            float m = MathHelper.sqrt(j * j + k * k + l * l);
+            j *= (1 / m) * -1;
+            k *= (1 / m) * -1;
+            l *= (1 / m) * -1;
+            user.addVelocity(j, k, l);
         }
 
-        // それでも撃ち続けるとオーバーヒートする
-        if (useTick >= 92){
-            this.overHeatEnd(stack,user);
+        if (useTick >= 103) {
+            // オーバーヒート時の処理
+            if (!(user instanceof PlayerEntity playerEntity)) {
+                return;
+            }
+            fov = Float.NaN;
+            useTick = 0;
+            playerEntity.getItemCooldownManager().set(stack, 60);
         }
     }
 
@@ -110,35 +187,30 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         // プレイヤーの視線方向を取得
         Vec3d lookDirection = player.getRotationVec(1.0F);
 
+        // オフセット
+        double offsetUp = -0.15; // 上に0.1ブロック分オフセット
+
+        // ベクトルを取得
+        Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+        Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
+
         // プレイヤーの視線先の位置を計算
         double distance = 2.0;
-        double particleX = player.getX() + lookDirection.x * distance;
-        double particleY = player.getEyeY() + lookDirection.y * distance; // 目の高さ
-        double particleZ = player.getZ() + lookDirection.z * distance;
+        double particleX = player.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
+        double particleY = player.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance; // 目の高さ
+        double particleZ = player.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
 
         // パーティクルを複数発生させるループ
-        for (int i = 0; i < 2; i++) {
-            double offsetX = (world.random.nextDouble() - 0.5) * 0.1;
-            double offsetY = (world.random.nextDouble() - 0.5) * 1;
-            double offsetZ = (world.random.nextDouble() - 0.5) * 0.1;
+        for (int i = 0; i < 1; i++) {
+            double offsetX = (world.random.nextDouble() - 0.5) * 0.3;
+            double offsetY = (world.random.nextDouble() - 0.5) * 0.3;
+            double offsetZ = (world.random.nextDouble() - 0.5) * 0.3;
 
             // 視線の先にパーティクルを追加
             world.addParticle(ParticleTypes.SMOKE,
                     particleX, particleY, particleZ,
                     offsetX, offsetY, offsetZ);
         }
-    }
-
-    // オーバーヒート！
-    public void overHeatEnd(ItemStack stack, LivingEntity user){
-        if (!(user instanceof PlayerEntity playerEntity)) {
-            return;
-        }
-        fov = Float.NaN;
-        useTick = 0;
-        playerEntity.getItemCooldownManager().set(stack, 60);
-        user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
-        user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
     }
 
     @Override
@@ -158,6 +230,47 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             user.playSound(SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON, 1.0f, 1.0f);
             return;
         }
+
+        // プレイヤーの視線方向を取得
+        Vec3d lookDirection = user.getRotationVec(1.0F);
+
+        // オフセット
+        double offsetUp = -0.15; // 上に0.1ブロック分オフセット
+
+        // ベクトルを取得
+        Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+        Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
+
+        // プレイヤーの視線先の位置を計算
+        double distance = 2.0;
+        double particleX = user.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
+        double particleY = user.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance; // 目の高さ
+        double particleZ = user.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
+
+        // パーティクルを複数発生させるループ
+        for (int i = 0; i < 1; i++) {
+            double offsetX = (world.random.nextDouble() - 0.5) * 1;
+            double offsetY = (world.random.nextDouble() - 0.5) * 1;
+            double offsetZ = (world.random.nextDouble() - 0.5) * 1;
+
+            // 視線の先にパーティクルを追加
+            world.addParticle(ParticleTypes.CRIT,
+                    particleX, particleY, particleZ,
+                    offsetX, offsetY, offsetZ);
+        }
+
+        // 後ろに下がっていく
+        float g = playerEntity.getYaw();
+        float h = playerEntity.getPitch();
+        float j = -MathHelper.sin(g * (float) (Math.PI / 180.0)) * MathHelper.cos(h * (float) (Math.PI / 180.0));
+        float k = -MathHelper.sin(h * (float) (Math.PI / 180.0));
+        float l = MathHelper.cos(g * (float) (Math.PI / 180.0)) * MathHelper.cos(h * (float) (Math.PI / 180.0));
+        float m = MathHelper.sqrt(j * j + k * k + l * l);
+        j *= (float) (0.02 / m) * -1;
+        k *= (float) (0.02 / m) * -1;
+        l *= (float) (0.02 / m) * -1;
+        playerEntity.addVelocity(j, k, l);
+
 
         // 音を鳴らす処理
         user.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 1.0f, 1.2f);
@@ -193,12 +306,21 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         playerEntity.getItemCooldownManager().set(stack, 20);
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
+
+        // 腕振る処理
+        Hand activeHand = user.getActiveHand();
+        if (activeHand == Hand.MAIN_HAND) {
+            user.swingHand(Hand.MAIN_HAND);
+        } else if (activeHand == Hand.OFF_HAND) {
+            user.swingHand(Hand.OFF_HAND);
+        }
+
         return true;
     }
 
     @Override
     public int getMaxUseTime(ItemStack stack, LivingEntity user) {
-        return 92;
+        return 103;
     }
 
     // インターフェースが欲しがってる処理
