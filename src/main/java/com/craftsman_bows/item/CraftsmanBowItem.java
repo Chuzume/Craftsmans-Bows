@@ -3,6 +3,7 @@ package com.craftsman_bows.item;
 import com.craftsman_bows.init.ModParticle;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BowItem;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -17,17 +18,42 @@ public class CraftsmanBowItem extends BowItem {
         // プレイヤーの視線方向を取得
         Vec3d lookDirection = player.getRotationVec(1.0F);
 
-        // プレイヤーの視線先の位置を計算
-        double distance = 2.0;
-        double particleX = player.getX() + lookDirection.x * distance;
-        double particleY = player.getEyeY() + lookDirection.y * distance; // 目の高さ
-        double particleZ = player.getZ() + lookDirection.z * distance;
+        // オフセット
+        double offsetRight;
+        double offsetUp = -0.1; // 上に0.1ブロック分オフセット
 
-        // パーティクルを複数発生させるループ
+        // 使用した手側にずらす
+        Hand activeHand = player.getActiveHand();
+        if (activeHand == Hand.MAIN_HAND) {
+            offsetRight = 0.3; // 右に0.3ブロック分オフセット
+        }
+        else {
+            offsetRight = -0.3; // 左にに0.// 3ブロック分オフセット
+        }
+
+        // 右方向のベクトルを取得する（視線ベクトルとY軸の外積）
+        Vec3d horizontalDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+        Vec3d verticalDirection = horizontalDirection.crossProduct(lookDirection).normalize();
+
+        // 複数のパーティクルを発生させるループ
         for (int i = 0; i < 1; i++) {
-            double offsetX = (world.random.nextDouble() - 0.5) * 0.1;
-            double offsetY = (world.random.nextDouble() - 0.5) * 0.1;
-            double offsetZ = (world.random.nextDouble() - 0.5) * 0.1;
+            double distanceToTarget = 0.7; // プレイヤーから目標地点までの距離
+
+            double particleX = player.getX() + lookDirection.x * distanceToTarget
+                    + horizontalDirection.x * offsetRight
+                    + verticalDirection.x * offsetUp;
+
+            double particleY = player.getEyeY() + lookDirection.y * distanceToTarget
+                    + horizontalDirection.y * offsetRight
+                    + verticalDirection.y * offsetUp;
+
+            double particleZ = player.getZ() + lookDirection.z * distanceToTarget
+                    + horizontalDirection.z * offsetRight
+                    + verticalDirection.z * offsetUp;
+
+            double offsetX = 0;
+            double offsetY = 0;
+            double offsetZ = 0;
 
             // 視線の先にパーティクルを追加
             world.addParticle(ModParticle.CHARGE_END,
@@ -41,17 +67,42 @@ public class CraftsmanBowItem extends BowItem {
         // プレイヤーの視線方向を取得
         Vec3d lookDirection = player.getRotationVec(1.0F);
 
-        // プレイヤーの視線先の位置を計算
-        double distance = 2.0;
-        double particleX = player.getX() + lookDirection.x * distance;
-        double particleY = player.getEyeY() + lookDirection.y * distance; // 目の高さ
-        double particleZ = player.getZ() + lookDirection.z * distance;
+        // オフセット
+        double offsetRight;
+        double offsetUp = -0.1; // 上に0.1ブロック分オフセット
 
-        // パーティクルを複数発生させるループ
+        // 使用した手側にずらす
+        Hand activeHand = player.getActiveHand();
+        if (activeHand == Hand.MAIN_HAND) {
+            offsetRight = 0.3; // 右に0.3ブロック分オフセット
+        }
+        else {
+            offsetRight = -0.3; // 左にに0.// 3ブロック分オフセット
+        }
+
+        // 右方向のベクトルを取得する（視線ベクトルとY軸の外積）
+        Vec3d horizontalDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+        Vec3d verticalDirection = lookDirection.crossProduct(new Vec3d(1, 0, 0)).normalize();
+
+        // 複数のパーティクルを発生させるループ
         for (int i = 0; i < 1; i++) {
-            double offsetX = (world.random.nextDouble() - 0.5) * 0.1;
-            double offsetY = (world.random.nextDouble() - 0.5) * 0.1;
-            double offsetZ = (world.random.nextDouble() - 0.5) * 0.1;
+            double distanceToTarget = 0.9; // プレイヤーから目標地点までの距離
+
+            double particleX = player.getX() + lookDirection.x * distanceToTarget
+                    + horizontalDirection.x * offsetRight
+                    + verticalDirection.x * offsetUp;
+
+            double particleY = player.getEyeY() + lookDirection.y * distanceToTarget
+                    + horizontalDirection.y * offsetRight
+                    + verticalDirection.y * offsetUp;
+
+            double particleZ = player.getZ() + lookDirection.z * distanceToTarget
+                    + horizontalDirection.z * offsetRight
+                    + verticalDirection.z * offsetUp;
+
+            double offsetX = 0;
+            double offsetY = 0;
+            double offsetZ = 0;
 
             // 視線の先にパーティクルを追加
             world.addParticle(ModParticle.SHOOT,
@@ -65,22 +116,61 @@ public class CraftsmanBowItem extends BowItem {
         // プレイヤーの視線方向を取得
         Vec3d lookDirection = player.getRotationVec(1.0F);
 
-        // プレイヤーの視線先の位置を計算
-        double distance = 2.0;
-        double particleX = player.getX() + lookDirection.x * distance;
-        double particleY = player.getEyeY() + lookDirection.y * distance; // 目の高さ
-        double particleZ = player.getZ() + lookDirection.z * distance;
+        // 出現位置の範囲を設定 (ここではX, Y, Zにそれぞれ0.3の範囲でばらつきを持たせます)
+        double rangeX = 1.5;
+        double rangeY = 1.5;
+        double rangeZ = 1.5;
 
-        // パーティクルを複数発生させるループ
+        // オフセット
+        double offsetRight;
+        double offsetUp = -0.1; // 上に0.1ブロック分オフセット
+
+        // 使用した手側にずらす
+        Hand activeHand = player.getActiveHand();
+        if (activeHand == Hand.MAIN_HAND) {
+            offsetRight = 0.3; // 右に0.3ブロック分オフセット
+        }
+        else {
+            offsetRight = -0.3; // 左にに0.// 3ブロック分オフセット
+        }
+
+
+        // 右方向のベクトルを取得する（視線ベクトルとY軸の外積）
+        Vec3d horizontalDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+        Vec3d verticalDirection = horizontalDirection.crossProduct(lookDirection).normalize();
+
+        // 目標位置（収束先）を設定し、オフセットを追加
+        double distanceToTarget = 0.9; // プレイヤーから目標地点までの距離
+        double targetX = player.getX() + lookDirection.x * distanceToTarget
+                + horizontalDirection.x * offsetRight
+                + verticalDirection.x * offsetUp;
+        double targetY = player.getEyeY() + lookDirection.y * distanceToTarget
+                + horizontalDirection.y * offsetRight
+                + verticalDirection.y * offsetUp;
+        double targetZ = player.getZ() + lookDirection.z * distanceToTarget
+                + horizontalDirection.z * offsetRight
+                + verticalDirection.z * offsetUp;
+
+        // 複数のパーティクルを発生させるループ
         for (int i = 0; i < 1; i++) {
-            double offsetX = (world.random.nextDouble() - 0.5) * 0.1;
-            double offsetY = (world.random.nextDouble() - 0.5) * 0.1;
-            double offsetZ = (world.random.nextDouble() - 0.5) * 0.1;
+            // 視線方向に基づいた初期位置にランダムな偏差を加え、右方向にオフセット
+            double particleX = player.getX() + lookDirection.x * 2.0
+                    + horizontalDirection.x * offsetRight
+                    + verticalDirection.x * offsetUp
+                    + (world.random.nextDouble() - 0.5) * rangeX;
 
-            // 視線の先にパーティクルを追加
-            world.addParticle(ModParticle.CHARGE_DUST,
-                    particleX, particleY, particleZ,
-                    offsetX, offsetY, offsetZ);
+            double particleY = player.getEyeY() + lookDirection.y * 2.0
+                    + horizontalDirection.y * offsetRight
+                    + verticalDirection.y * offsetUp
+                    + (world.random.nextDouble() - 0.5) * rangeY;
+
+            double particleZ = player.getZ() + lookDirection.z * 2.0
+                    + horizontalDirection.z * offsetRight
+                    + verticalDirection.z * offsetUp
+                    + (world.random.nextDouble() - 0.5) * rangeZ;
+
+            // パーティクルを追加し、収束先を設定
+            world.addParticle(ModParticle.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
         }
     }
 }
