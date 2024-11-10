@@ -82,11 +82,11 @@ public class CraftsmanBowItem extends BowItem {
 
         // 右方向のベクトルを取得する（視線ベクトルとY軸の外積）
         Vec3d horizontalDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
-        Vec3d verticalDirection = lookDirection.crossProduct(new Vec3d(1, 0, 0)).normalize();
+        Vec3d verticalDirection = horizontalDirection.crossProduct(lookDirection).normalize();
 
         // 複数のパーティクルを発生させるループ
         for (int i = 0; i < 1; i++) {
-            double distanceToTarget = 0.9; // プレイヤーから目標地点までの距離
+            double distanceToTarget = 0.7; // プレイヤーから目標地点までの距離
 
             double particleX = player.getX() + lookDirection.x * distanceToTarget
                     + horizontalDirection.x * offsetRight
