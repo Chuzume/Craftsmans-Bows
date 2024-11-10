@@ -369,12 +369,13 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
     }
 
     @Override
-    public String getFirstPersonRender() {
-        if (useTick >= 1) {
-            return "CROSSBOW_HOLD";
-        } else {
-            return null;
-        }
+    public String getUsingFirstPersonRender() {
+        return "CROSSBOW_HOLD";
+    }
+
+    @Override
+    public String getStandbyFirstPersonRender() {
+        return null;
     }
 
     @Override
