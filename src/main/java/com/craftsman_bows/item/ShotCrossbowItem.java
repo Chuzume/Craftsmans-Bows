@@ -18,11 +18,11 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.item.consume.UseAction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import com.craftsman_bows.init.ModParticle;
+import com.craftsman_bows.init.ModParticleTypes;
 
 import java.util.List;
 
-public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, CustomArmPoseItem , CustomFirstPersonRender{
+public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMoveItem, CustomArmPoseItem , CustomFirstPersonRender{
     public ShotCrossbowItem(Settings settings) {
         super(settings);
     }
@@ -99,7 +99,7 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
             double offsetZ = (world.random.nextDouble() - 0.5) * 1;
 
             // 視線の先にパーティクルを追加
-            world.addParticle(ModParticle.SPARKLE_PARTICLE,
+            world.addParticle(ModParticleTypes.SPARKLE_PARTICLE,
                     particleX, particleY, particleZ,
                     offsetX, offsetY, offsetZ);
         }

@@ -12,10 +12,9 @@ public class ChargedParticle extends AnimatedParticle {
         super(clientWorld, d, e, f, spriteProvider, 0.0125F);
         this.alpha = 0.7F;
         this.maxAge = 3;
-        this.scale = 1.0F;
+        this.scale = 0.3F;
         this.setSpriteForAge(spriteProvider);
     }
-
 
     @Environment(EnvType.CLIENT)
     public static class Factory implements ParticleFactory<SimpleParticleType> {
@@ -24,8 +23,6 @@ public class ChargedParticle extends AnimatedParticle {
         public Factory(SpriteProvider spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
-
-
 
         public Particle createParticle(SimpleParticleType simpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             return new ChargedParticle(clientWorld, d, e, f, g, this.spriteProvider);

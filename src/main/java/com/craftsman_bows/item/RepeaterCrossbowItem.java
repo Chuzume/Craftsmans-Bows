@@ -1,6 +1,6 @@
 package com.craftsman_bows.item;
 
-import com.craftsman_bows.init.ModParticle;
+import com.craftsman_bows.init.ModParticleTypes;
 import com.craftsman_bows.init.ModSoundEvents;
 import com.craftsman_bows.interfaces.entity.BypassCooldown;
 import com.craftsman_bows.interfaces.item.CustomArmPoseItem;
@@ -116,7 +116,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
                         + (world.random.nextDouble() - 0.5) * rangeZ;
 
                 // パーティクルを追加し、収束先を設定
-                world.addParticle(ModParticle.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
+                world.addParticle(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
             }
         }
 
@@ -139,6 +139,34 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         if (useTick == 40) {
             user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
             user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_XYLOPHONE.value(), 1.0f, 1.5f);
+
+            // プレイヤーの視線方向を取得
+            Vec3d lookDirection = user.getRotationVec(1.0F);
+
+            // オフセット
+            double offsetUp = -0.15; // 上に0.1ブロック分オフセット
+
+            // ベクトルを取得
+            Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+            Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
+
+            // プレイヤーの視線先の位置を計算
+            double distance = 2.0;
+            double particleX = user.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
+            double particleY = user.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance; // 目の高さ
+            double particleZ = user.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
+
+            // パーティクルを複数発生させるループ
+            for (int i = 0; i < 1; i++) {
+                double offsetX = (world.random.nextDouble() - 0.5) * 1;
+                double offsetY = (world.random.nextDouble() - 0.5) * 1;
+                double offsetZ = (world.random.nextDouble() - 0.5) * 1;
+
+                // 視線の先にパーティクルを追加
+                world.addParticle(ModParticleTypes.CHARGE_END,
+                        particleX, particleY, particleZ,
+                        offsetX, offsetY, offsetZ);
+            }
         }
         // 完了して一拍置いてから射撃開始
         if (useTick >= 50) {
@@ -149,7 +177,35 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 2.0f);
         }
         if (useTick >= 82) {
-            this.spawnAlertParticles(world, user);
+            // もくもく警告パーティクル
+
+            // プレイヤーの視線方向を取得
+            Vec3d lookDirection = user.getRotationVec(1.0F);
+
+            // オフセット
+            double offsetUp = -0.15; // 上に0.1ブロック分オフセット
+
+            // ベクトルを取得
+            Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+            Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
+
+            // プレイヤーの視線先の位置を計算
+            double distance = 2.0;
+            double particleX = user.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
+            double particleY = user.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance; // 目の高さ
+            double particleZ = user.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
+
+            // パーティクルを複数発生させるループ
+            for (int i = 0; i < 1; i++) {
+                double offsetX = (world.random.nextDouble() - 0.5) * 0.3;
+                double offsetY = (world.random.nextDouble() - 0.5) * 0.3;
+                double offsetZ = (world.random.nextDouble() - 0.5) * 0.3;
+
+                // 視線の先にパーティクルを追加
+                world.addParticle(ParticleTypes.SMOKE,
+                        particleX, particleY, particleZ,
+                        offsetX, offsetY, offsetZ);
+            }
         }
         // それでも撃ち続けるとオーバーヒートする
         if (useTick >= 102) {
@@ -179,37 +235,6 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             fov = Float.NaN;
             useTick = 0;
             playerEntity.getItemCooldownManager().set(stack, 60);
-        }
-    }
-
-    // もくもく警告パーティクル
-    private void spawnAlertParticles(World world, LivingEntity player) {
-        // プレイヤーの視線方向を取得
-        Vec3d lookDirection = player.getRotationVec(1.0F);
-
-        // オフセット
-        double offsetUp = -0.15; // 上に0.1ブロック分オフセット
-
-        // ベクトルを取得
-        Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
-        Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
-
-        // プレイヤーの視線先の位置を計算
-        double distance = 2.0;
-        double particleX = player.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
-        double particleY = player.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance; // 目の高さ
-        double particleZ = player.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
-
-        // パーティクルを複数発生させるループ
-        for (int i = 0; i < 1; i++) {
-            double offsetX = (world.random.nextDouble() - 0.5) * 0.3;
-            double offsetY = (world.random.nextDouble() - 0.5) * 0.3;
-            double offsetZ = (world.random.nextDouble() - 0.5) * 0.3;
-
-            // 視線の先にパーティクルを追加
-            world.addParticle(ParticleTypes.SMOKE,
-                    particleX, particleY, particleZ,
-                    offsetX, offsetY, offsetZ);
         }
     }
 

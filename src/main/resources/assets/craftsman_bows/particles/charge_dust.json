@@ -1,5 +1,8 @@
 {
   "textures": [
-    "craftsman_bows:charging_1"
+    "craftsman_bows:charging_0",
+    "craftsman_bows:charging_1",
+    "craftsman_bows:charging_2",
+    "craftsman_bows:charging_3"
   ]
 }

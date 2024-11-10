@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 
 import static com.craftsman_bows.CraftsmanBows.Mod_ID;
 
-public class ModParticle {
+public class ModParticleTypes {
 
     public static final SimpleParticleType SPARKLE_PARTICLE = FabricParticleTypes.simple();
     public static final SimpleParticleType CHARGE_DUST = FabricParticleTypes.simple();

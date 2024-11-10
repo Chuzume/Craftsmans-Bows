@@ -5,7 +5,7 @@ import com.craftsman_bows.particle.ChargedParticle;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.minecraft.client.particle.EndRodParticle;
 
-import static com.craftsman_bows.init.ModParticle.*;
+import static com.craftsman_bows.init.ModParticleTypes.*;
 
 public class RegisterParticle
 {

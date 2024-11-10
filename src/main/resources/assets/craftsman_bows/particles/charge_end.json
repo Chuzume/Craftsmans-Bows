@@ -1,9 +1,7 @@
 {
   "textures": [
-    "craftsman_bows:shoot_4",
-    "craftsman_bows:shoot_3",
-    "craftsman_bows:shoot_2",
-    "craftsman_bows:shoot_1",
-    "craftsman_bows:shoot_0"
+    "craftsman_bows:charge_end_0",
+    "craftsman_bows:charge_end_1",
+    "craftsman_bows:charge_end_2"
   ]
 }

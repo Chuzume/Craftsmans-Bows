@@ -10,7 +10,7 @@ public class CraftsmanBows implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		item.init();
-		ModParticle.init();
+		ModParticleTypes.init();
 		ModSoundEvents.init();
 	}
 }
