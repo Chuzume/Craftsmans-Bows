@@ -21,9 +21,10 @@ public class ChargeDustParticle extends AnimatedParticle {
         this.targetY = targetY;
         this.targetZ = targetZ;
         this.scale = 0.1F * (this.random.nextFloat() * 0.2F + 0.5F);
-        this.red = 0.9f;
-        this.green = 0.7f;
-        this.blue = 0.2f;
+        float j = this.random.nextFloat() * 0.2F + 0.8F;
+        this.red = j * 0.9f;
+        this.green = j * 0.7f;
+        this.blue = j * 0.2f;
         this.maxAge = 5;
         this.setSpriteForAge(spriteProvider);
     }

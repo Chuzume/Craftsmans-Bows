@@ -14,10 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ArmPoseMixin{
     @Inject(method = "getArmPose(Lnet/minecraft/client/render/entity/state/PlayerEntityRenderState;Lnet/minecraft/client/render/entity/state/PlayerEntityRenderState$HandState;Lnet/minecraft/util/Hand;)Lnet/minecraft/client/render/entity/model/BipedEntityModel$ArmPose;", at = @At("TAIL"), cancellable = true)
     private static void getArmPose(PlayerEntityRenderState state, PlayerEntityRenderState.HandState handState, Hand hand, CallbackInfoReturnable<BipedEntityModel.ArmPose> cir ) {
-        // インターフェース経由でカスタムアイテム判定を取得
         if (((IsCustomItem) handState).isCustomItem()) {
-            // カスタムのArmPoseを返す
-            cir.setReturnValue(BipedEntityModel.ArmPose.CROSSBOW_HOLD); // 任意のポーズ
+            cir.setReturnValue(BipedEntityModel.ArmPose.CROSSBOW_HOLD);
         }
     }
 }

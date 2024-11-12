@@ -1,5 +1,30 @@
 {
   "legacy_arrow_1": {"sounds": ["craftsman_bows:erdie/arrow1"]},
   "legacy_arrow_2": {"sounds": ["craftsman_bows:erdie/arrow2"]},
-  "bow_charge": {"sounds": ["minecraft:item/crossbow/loading_start"]}
+  "dungeons_bow_load": {"sounds": [
+    "craftsman_bows:dungeons/bow_load_1",
+    "craftsman_bows:dungeons/bow_load_2",
+    "craftsman_bows:dungeons/bow_load_3",
+    "craftsman_bows:dungeons/bow_load_4"
+  ]},
+  "dungeons_bow_shoot": {"sounds": [
+    "craftsman_bows:dungeons/bow_shoot_1",
+    "craftsman_bows:dungeons/bow_shoot_2",
+    "craftsman_bows:dungeons/bow_shoot_3"
+  ]},
+  "dungeons_cog_crossbow_pickup": {"sounds": [
+    "craftsman_bows:dungeons/cog_crossbow_pickup_1",
+    "craftsman_bows:dungeons/cog_crossbow_pickup_2",
+    "craftsman_bows:dungeons/cog_crossbow_pickup_3"
+  ]},
+  "dungeons_cog_crossbow_shoot": {"sounds": [
+    "craftsman_bows:dungeons/cog_crossbow_shoot_1",
+    "craftsman_bows:dungeons/cog_crossbow_shoot_2",
+    "craftsman_bows:dungeons/cog_crossbow_shoot_3"
+  ]},
+  "dungeons_cog_crossbow_place": {"sounds": [
+    "craftsman_bows:dungeons/cog_crossbow_place_1",
+    "craftsman_bows:dungeons/cog_crossbow_place_2",
+    "craftsman_bows:dungeons/cog_crossbow_place_3"
+  ]}
 }

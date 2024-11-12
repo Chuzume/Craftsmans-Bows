@@ -7,21 +7,11 @@
     " R "
   ],
   "key": {
-    "/": {
-      "item": "minecraft:stick"
-    },
-    "n": {
-      "item": "minecraft:netherite_ingot"
-    },
-    "g": {
-      "item": "minecraft:gold_ingot"
-    },
-    "D": {
-      "item": "minecraft:dispenser"
-    },
-    "R": {
-      "item": "minecraft:repeater"
-    }
+    "/": "minecraft:stick",
+    "n": "minecraft:netherite_ingot",
+    "g": "minecraft:gold_ingot",
+    "D": "minecraft:dispenser",
+    "R": "minecraft:repeater"
   },
   "result": {
     "id": "craftsman_bows:repeater_crossbow",

@@ -10,7 +10,6 @@ import static com.craftsman_bows.init.ModParticleTypes.*;
 public class RegisterParticle
 {
     public static void init() {
-        ParticleFactoryRegistry.getInstance().register(SPARKLE_PARTICLE, EndRodParticle.Factory::new);
         ParticleFactoryRegistry.getInstance().register(CHARGE_DUST, ChargeDustParticle.Factory::new);
         ParticleFactoryRegistry.getInstance().register(SHOOT, ChargedParticle.Factory::new);
         ParticleFactoryRegistry.getInstance().register(CHARGE_END, ChargedParticle.Factory::new);

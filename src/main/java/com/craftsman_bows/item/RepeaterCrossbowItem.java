@@ -38,6 +38,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
 
         // サウンド
+        user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PICKUP, 0.4f, 2.0f);
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
 
@@ -125,13 +126,15 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         }
         if (useTick == 20) {
             user.playSound(SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON, 1.0f, 1.5f);
+
         }
         if (useTick == 30) {
-            user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 1.25f);
+            user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PICKUP, 0.4f, 2.0f);
             user.playSound(SoundEvents.BLOCK_PISTON_EXTEND, 1.0f, 1.0f);
         }
         if (useTick == 31) {
             user.playSound(SoundEvents.BLOCK_PISTON_EXTEND, 1.0f, 1.5f);
+
         }
         if (useTick == 32) {
             user.playSound(SoundEvents.BLOCK_PISTON_EXTEND, 1.0f, 2.0f);
@@ -139,6 +142,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         if (useTick == 40) {
             user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
             user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_XYLOPHONE.value(), 1.0f, 1.5f);
+
 
             // プレイヤーの視線方向を取得
             Vec3d lookDirection = user.getRotationVec(1.0F);
@@ -174,6 +178,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         }
         // あんまり長いこと撃ってると煙を吹き出す
         if (useTick == 82) {
+            user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PICKUP, 1.0f, 1.5f);
             user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 2.0f);
         }
         if (useTick >= 82) {
@@ -211,8 +216,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         if (useTick >= 102) {
             // サウンド
             user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 1.5f);
-            user.playSound(SoundEvents.ENTITY_ITEM_BREAK, 1.0f, 1f);
-            user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
+            user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1f);
 
             // 吹っ飛ぶ
             float g = user.getYaw();
@@ -225,6 +229,34 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             k *= (1 / m) * -1;
             l *= (1 / m) * -1;
             user.addVelocity(j, k, l);
+
+            // プレイヤーの視線方向を取得
+            Vec3d lookDirection = user.getRotationVec(1.0F);
+
+            // オフセット
+            double offsetUp = -0.15; // 上に0.1ブロック分オフセット
+
+            // ベクトルを取得
+            Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+            Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
+
+            // プレイヤーの視線先の位置を計算
+            double distance = 2.0;
+            double particleX = user.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
+            double particleY = user.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance; // 目の高さ
+            double particleZ = user.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
+
+            // パーティクルを複数発生させるループ
+            for (int i = 0; i < 10; i++) {
+                double offsetX = (world.random.nextDouble() - 0.5) * 0.3;
+                double offsetY = (world.random.nextDouble() - 0.5) * 0.3;
+                double offsetZ = (world.random.nextDouble() - 0.5) * 0.3;
+
+                // 視線の先にパーティクルを追加
+                world.addParticle(ParticleTypes.LARGE_SMOKE,
+                        particleX, particleY, particleZ,
+                        offsetX, offsetY, offsetZ);
+            }
         }
 
         if (useTick >= 103) {
@@ -316,7 +348,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
     @Override
     protected ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
         ProjectileEntity entity = super.createArrowEntity(world, shooter, weaponStack, projectileStack, critical);
-        ((BypassCooldown) entity).setBypassDamageCooldown();
+        (entity).setBypassDamageCooldown();
         return entity;
     }
 
@@ -331,6 +363,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         playerEntity.getItemCooldownManager().set(stack, 20);
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
+
 
         // 腕振る処理
         Hand activeHand = user.getActiveHand();

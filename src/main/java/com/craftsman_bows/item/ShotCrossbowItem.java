@@ -43,7 +43,7 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
             shootStack = 0;
             fullCharged = false;
             user.setCurrentHand(hand);
-            user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 1.25f);
+            user.playSound(SoundEvents.ITEM_CROSSBOW_LOADING_START.value(), 1.0f, 1.25f);
             return ActionResult.CONSUME;
         }
         return ActionResult.FAIL;
@@ -199,7 +199,7 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
         }
 
         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 1.0f);
-        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
+        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
 
         return true;
     }

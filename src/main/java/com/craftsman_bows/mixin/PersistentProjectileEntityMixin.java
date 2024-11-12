@@ -29,8 +29,6 @@ public abstract class PersistentProjectileEntityMixin extends Entity implements 
     @Shadow
     protected abstract void initDataTracker(DataTracker.Builder builder);
 
-
-
     @Override
     public void setBypassDamageCooldown() {
         this.dataTracker.set(BYPASS_DAMAGE_COOLDOWN, true);

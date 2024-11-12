@@ -50,7 +50,7 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
     // 最初の使用時のアクション
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 1.5f);
+        user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE, 1.0f, 1.2f);
         return ItemUsage.consumeHeldItem(world, user, hand);
     }
 
@@ -91,7 +91,8 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.0f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + f * 0.5f);
             } else {
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.0f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + 0.9f);
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
+                //world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.5f);
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.4f);
             }
         }
         return true;

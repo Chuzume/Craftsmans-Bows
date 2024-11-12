@@ -1,22 +1,16 @@
 {
     "type": "minecraft:crafting_shaped",
     "category": "equipment",
-    "key": {
-        "g": {
-            "item": "minecraft:gold_ingot"
-        },
-        "/": {
-            "item": "minecraft:stick"
-        },
-        "S": {
-            "item": "minecraft:string"
-        }
-    },
     "pattern": [
         "g/S",
         "/ S",
         "g/S"
     ],
+    "key": {
+        "g": "minecraft:gold_ingot",
+        "/": "minecraft:stick",
+        "S": "minecraft:string"
+    },
     "result": {
         "id": "craftsman_bows:longbow",
         "count": 1

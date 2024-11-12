@@ -37,7 +37,7 @@ public class LongBowItem
     // 最初の使用時のアクション
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 0.7f);
+        user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE, 1.0f, 0.8f);
         fov = 1f;
         fullCharged = false;
         return ItemUsage.consumeHeldItem(world, user, hand);
@@ -93,7 +93,7 @@ public class LongBowItem
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
         if (world instanceof ServerWorld serverWorld) {
             if (!list.isEmpty() && f >= 1) {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 6.0f, 0.0f, true, null);
+                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 5.0f, 0.1f, true, null);
             } else {
                 this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 2.0f, 0.0f, f == 0.0f, null);
             }
@@ -102,7 +102,7 @@ public class LongBowItem
             } else {
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.4f);
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 0.7f);
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.0f);
             }
         }
         return true;
