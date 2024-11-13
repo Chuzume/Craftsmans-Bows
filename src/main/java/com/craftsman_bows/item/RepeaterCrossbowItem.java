@@ -62,9 +62,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
     // 右クリックを押し続けているときの処理
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-        if (world instanceof ServerWorld) {
-            useTick += 1;
-        }
+        int useTick = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
         // 徐々に移動速度が下がっていく
         movementSpeed = 3.0f - (useTick * 0.1f);
@@ -256,17 +254,14 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
                 world.addParticle(ParticleTypes.LARGE_SMOKE,
                         particleX, particleY, particleZ,
                         offsetX, offsetY, offsetZ);
-            }
-        }
 
-        if (useTick >= 103) {
-            // オーバーヒート時の処理
+            // クールダウンに突入
             if (!(user instanceof PlayerEntity playerEntity)) {
                 return;
             }
             fov = Float.NaN;
-            useTick = 0;
             playerEntity.getItemCooldownManager().set(stack, 60);
+            }
         }
     }
 
