@@ -1,9 +1,6 @@
 package com.craftsman_bows.init;
 
-import com.craftsman_bows.item.LongBowItem;
-import com.craftsman_bows.item.RepeaterCrossbowItem;
-import com.craftsman_bows.item.ShortBowItem;
-import com.craftsman_bows.item.ShotCrossbowItem;
+import com.craftsman_bows.item.*;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
@@ -37,6 +34,7 @@ public class item {
     public static final Item LONG_BOW = register("longbow", new LongBowItem(createSettings("longbow").maxCount(1).maxDamage(576).enchantable(1)));
     public static final Item SHOT_CROSSBOW = register("shot_crossbow", new ShotCrossbowItem(createSettings("shot_crossbow").maxCount(1).maxDamage(600).enchantable(1)));
     public static final Item REPEATER_CROSSBOW = register("repeater_crossbow", new RepeaterCrossbowItem(createSettings("repeater_crossbow").maxCount(1).maxDamage(600).enchantable(1)));
+    public static final Item BURST_ARBALEST = register("burst_arbalest", new BurstArbalestItem(createSettings("burst_arbalest").maxCount(1).maxDamage(600).enchantable(1)));
 
     public static void init() {
 
@@ -46,6 +44,7 @@ public class item {
             content.add(LONG_BOW);
             content.add(SHOT_CROSSBOW);
             content.add(REPEATER_CROSSBOW);
+            content.add(BURST_ARBALEST);
         });
     }
 }
