@@ -181,7 +181,7 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
         // 使用時間0.1未満では使用をキャンセルする処理のようだ
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
         float f = getPullProgress(i);
-        if ((double) f < 0.3) {
+        if ((double) f < 1) {
             return false;
         }
 
