@@ -48,7 +48,6 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
     void chargeEndParticle(World world, LivingEntity player) {
         super.chargeEndParticle(world, player);
         player.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 1.2f);
-
     }
 
     // 最初の使用時のアクション

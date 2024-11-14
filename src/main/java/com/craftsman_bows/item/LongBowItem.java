@@ -67,6 +67,12 @@ public class LongBowItem
         fov = 1.0f - getPullProgress(i) / 2.0f;
     }
 
+    @Override
+    void chargeEndParticle(World world, LivingEntity player) {
+        super.chargeEndParticle(world, player);
+        player.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_4, 1.0f, 1.0f);
+    }
+
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
     public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {

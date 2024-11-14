@@ -10,11 +10,13 @@ import net.minecraft.item.BowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import com.craftsman_bows.init.ModComponents;
 
@@ -34,10 +36,9 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         ItemStack stack = user.getStackInHand(hand);
 
         // サウンド
-        //user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PICKUP, 0.4f, 1.5f);
-        user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 1.0f);
+        user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 0.8f);
         //user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
-        //user.playSound(SoundEvents.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
+        user.playSound(SoundEvents.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
 
         // 腕振る処理
         Hand activeHand = user.getActiveHand();
@@ -60,8 +61,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         int useTick = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
         // クライアント、サーバーともに行う処理
-        chargingParticle(world, user);
-        if (useTick <= 70) {
+        if (useTick < 70) {
             chargingParticle(world, user);
         }
 
@@ -169,13 +169,46 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
 
                 int burstCount = stack.getOrDefault(ModComponents.BURST_COUNT, 0);
 
-                //stack.set(ModComponents.MY_COMPONENT_TYPE, --burstCount2);
-
                 if (burstCount >= 1) {
                     burstShot(world, user, stack);
 
                     // 更新した値を stack.set() に渡して保存
                     stack.set(ModComponents.BURST_COUNT, burstCount - 1);
+
+                    if ((user instanceof PlayerEntity playerEntity) && burstCount == 1)
+                    {
+                        user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_SHOOT, 1.0f, 1.0f);
+                        user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1.5f);
+                        playerEntity.getItemCooldownManager().set(stack, 20);
+
+                        // プレイヤーの視線方向を取得
+                        Vec3d lookDirection = user.getRotationVec(1.0F);
+
+                        // オフセット
+                        double offsetUp = -0.15; // 上に0.1ブロック分オフセット
+
+                        // ベクトルを取得
+                        Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+                        Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
+
+                        // プレイヤーの視線先の位置を計算
+                        double distance = 2.0;
+                        double particleX = user.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
+                        double particleY = user.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance; // 目の高さ
+                        double particleZ = user.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
+
+                        // パーティクルを複数発生させるループ
+                        for (int i = 0; i < 5; i++) {
+                            double offsetX = (world.random.nextDouble() - 0.5) * 0.3;
+                            double offsetY = (world.random.nextDouble() - 0.5) * 0.3;
+                            double offsetZ = (world.random.nextDouble() - 0.5) * 0.3;
+
+                            // 視線の先にパーティクルを追加
+                            world.addParticle(ParticleTypes.LARGE_SMOKE,
+                                    particleX, particleY, particleZ,
+                                    offsetX, offsetY, offsetZ);
+                        }
+                    }
                 }
             }
         }
@@ -196,11 +229,20 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
             return false;
         }
 
+
         int burstStack = stack.getOrDefault(ModComponents.BURST_STACK, 0);
         stack.set(ModComponents.BURST_COUNT, burstStack);
         stack.remove(ModComponents.BURST_STACK);
 
-        playerEntity.getItemCooldownManager().set(stack, 20);
+        // バースト数に応じたクールタイムを設定
+        if (burstStack >= 1) {
+            playerEntity.getItemCooldownManager().set(stack, 150);
+        }
+        else{
+            playerEntity.getItemCooldownManager().set(stack, 20);
+        }
+
+
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
 

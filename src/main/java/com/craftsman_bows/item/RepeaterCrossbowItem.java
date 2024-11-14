@@ -43,7 +43,6 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
 
         // 変数リセット
-        useTick = 0;
         movementSpeed = 3.0f;
         fov = Float.NaN;
 
@@ -175,11 +174,11 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             this.GatlingShot(world, user, stack);
         }
         // あんまり長いこと撃ってると煙を吹き出す
-        if (useTick == 82) {
+        if (useTick == 90) {
             user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PICKUP, 1.0f, 1.5f);
             user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 2.0f);
         }
-        if (useTick >= 82) {
+        if (useTick >= 90) {
             // もくもく警告パーティクル
 
             // プレイヤーの視線方向を取得
@@ -211,7 +210,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             }
         }
         // それでも撃ち続けるとオーバーヒートする
-        if (useTick >= 102) {
+        if (useTick == 114) {
             // サウンド
             user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 1.5f);
             user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1f);
@@ -354,7 +353,6 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             return false;
         }
         fov = Float.NaN;
-        useTick = 0;
         playerEntity.getItemCooldownManager().set(stack, 20);
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
@@ -373,7 +371,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
 
     @Override
     public int getMaxUseTime(ItemStack stack, LivingEntity user) {
-        return 103;
+        return 115;
     }
 
     // インターフェースが欲しがってる処理
