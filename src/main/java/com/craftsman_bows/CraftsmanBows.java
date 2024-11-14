@@ -12,5 +12,6 @@ public class CraftsmanBows implements ModInitializer {
 		item.init();
 		ModParticleTypes.init();
 		ModSoundEvents.init();
+		ModComponents.init();
 	}
 }

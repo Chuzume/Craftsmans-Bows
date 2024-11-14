@@ -1,6 +1,7 @@
 {
-    "item.craftsman_bows.shortbow": "短弓",
-    "item.craftsman_bows.longbow": "長弓",
+    "item.craftsman_bows.shortbow": "ショートボウ",
+    "item.craftsman_bows.longbow": "ロングボウ",
     "item.craftsman_bows.shot_crossbow": "ショットクロスボウ",
-    "item.craftsman_bows.repeater_crossbow": "リピータークロスボウ"
+    "item.craftsman_bows.repeater_crossbow": "リピータークロスボウ",
+    "item.craftsman_bows.burst_arbalest": "バーストアルバレスト"
 }

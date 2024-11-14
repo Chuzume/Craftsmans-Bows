@@ -1,6 +1,12 @@
 {
   "legacy_arrow_1": {"sounds": ["craftsman_bows:erdie/arrow1"]},
   "legacy_arrow_2": {"sounds": ["craftsman_bows:erdie/arrow2"]},
+
+  "dungeons_bow_charge_1": {"sounds": ["craftsman_bows:dungeons/bow_charge_1"]},
+  "dungeons_bow_charge_2": {"sounds": ["craftsman_bows:dungeons/bow_charge_2"]},
+  "dungeons_bow_charge_3": {"sounds": ["craftsman_bows:dungeons/bow_charge_3"]},
+  "dungeons_bow_charge_4": {"sounds": ["craftsman_bows:dungeons/bow_charge_4"]},
+
   "dungeons_bow_load": {"sounds": [
     "craftsman_bows:dungeons/bow_load_1",
     "craftsman_bows:dungeons/bow_load_2",

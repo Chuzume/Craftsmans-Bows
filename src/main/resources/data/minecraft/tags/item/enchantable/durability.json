@@ -3,6 +3,7 @@
     "craftsman_bows:shortbow",
     "craftsman_bows:longbow",
     "craftsman_bows:shot_crossbow",
-    "craftsman_bows:repeater_crossbow"
+    "craftsman_bows:repeater_crossbow",
+    "craftsman_bows:burst_arbalest"
   ]
 }
