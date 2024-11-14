@@ -18,21 +18,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import com.craftsman_bows.init.ModComponents;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMoveItem {
     public BurstArbalestItem(Item.Settings settings) {
         super(settings);
     }
-
-
-    // Mapたち
-    private final Map<ItemStack, Integer> itemBurstCounts = new HashMap<>();
-    private final Map<ItemStack, Integer> itemBurstStacks = new HashMap<>();
-    int burstCount;
-    int burstStack;
 
     // 最初の使用時のアクション
     @Override
