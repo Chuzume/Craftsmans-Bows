@@ -30,8 +30,6 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
     // 変数
     // 変数の定義
     int shootStack = 0;
-    boolean fullCharged;
-    boolean usingItem;
     float movementSpeed = 2.5f;
 
     // 最初の使用時のアクション
@@ -41,9 +39,8 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
         boolean bl = !user.getProjectileType(itemStack).isEmpty();
         if (user.isInCreativeMode() || bl) {
             shootStack = 0;
-            fullCharged = false;
             user.setCurrentHand(hand);
-            user.playSound(SoundEvents.ITEM_CROSSBOW_LOADING_START.value(), 1.0f, 1.25f);
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 1.25f);
             return ActionResult.CONSUME;
         }
         return ActionResult.FAIL;
@@ -57,7 +54,7 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
         // チャージ演出
-        if (getPullProgress(i) <= 1.0F && !fullCharged) {
+        if (i < 20) {
             // プレイヤーの視線方向を取得
             Vec3d lookDirection = user.getRotationVec(1.0F);
 
@@ -99,11 +96,16 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
             }
         }
 
-        if (getPullProgress(i) >= 1.0F && !fullCharged) {
-            fullCharged = true;
+        // 途中が寂しいので…
+        if (i == 10) {
+            user.playSound(SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE.value(), 1.0f, 1.0f);
+        }
+
+        if (i == 20) {
             shootStack = 4;
             user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_XYLOPHONE.value(), 1.0f, 1.5f);
             user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 1.1f);
 
             // プレイヤーの視線方向を取得
             Vec3d lookDirection = user.getRotationVec(1.0F);
@@ -167,12 +169,11 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
     public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (!(user instanceof PlayerEntity)) {
+        if (!(user instanceof PlayerEntity playerEntity)) {
             return false;
         }
 
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
-        PlayerEntity playerEntity = (PlayerEntity) user;
         ItemStack itemStack = playerEntity.getProjectileType(stack);
         if (itemStack.isEmpty()) {
             return false;

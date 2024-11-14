@@ -72,9 +72,6 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
             return false;
         }
 
-        // パーティクル
-        shootParticle(world, user);
-
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         ItemStack itemStack = playerEntity.getProjectileType(stack);
         if (itemStack.isEmpty()) {
@@ -88,6 +85,11 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
             return false;
         }
 
+        // パーティクル
+        if (f >= 1) {
+            shootParticle(world, user);
+        }
+
         // ここが放つ処理に見える。
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
         if (world instanceof ServerWorld serverWorld) {
@@ -98,7 +100,6 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.0f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + f * 0.5f);
             } else {
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.0f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + 0.9f);
-                //world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.5f);
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.4f);
             }
         }

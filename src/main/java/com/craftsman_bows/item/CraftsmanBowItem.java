@@ -31,7 +31,6 @@ public class CraftsmanBowItem extends BowItem {
             offsetRight = -0.3; // 左にに0.// 3ブロック分オフセット
         }
 
-
         // 右方向のベクトルを取得する（視線ベクトルとY軸の外積）
         Vec3d horizontalDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
         Vec3d verticalDirection = horizontalDirection.crossProduct(lookDirection).normalize();

@@ -153,6 +153,25 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         l *= (float) (0.02 / m) * -1;
         playerEntity.addVelocity(j, k, l);
 
+        // プレイヤーの視線方向を取得
+        Vec3d lookDirection = user.getRotationVec(1.0F);
+
+        // プレイヤーの視線先の位置を計算（この例ではプレイヤーの位置から2ブロック先にパーティクルを表示）
+        double distance = 1.0;
+        double particleX = user.getX() + lookDirection.x * distance;
+        double particleY = user.getEyeY() + lookDirection.y * distance; // 目の高さ
+        double particleZ = user.getZ() + lookDirection.z * distance;
+
+        // パーティクルを複数発生させるループ
+        double offsetX = (world.random.nextDouble() - 0.5) * 1;
+        double offsetY = (world.random.nextDouble() - 0.5) * 1;
+        double offsetZ = (world.random.nextDouble() - 0.5) * 1;
+
+        // 視線の先にパーティクルを追加
+        world.addParticle(ParticleTypes.CRIT,
+                particleX, particleY, particleZ,
+                offsetX, offsetY, offsetZ);
+
         // ワールドがサーバーなら
         if (world instanceof ServerWorld serverWorld) {
             if (!list.isEmpty()) {
@@ -184,24 +203,17 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
                         // プレイヤーの視線方向を取得
                         Vec3d lookDirection = user.getRotationVec(1.0F);
 
-                        // オフセット
-                        double offsetUp = -0.15; // 上に0.1ブロック分オフセット
-
-                        // ベクトルを取得
-                        Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
-                        Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
-
-                        // プレイヤーの視線先の位置を計算
-                        double distance = 2.0;
-                        double particleX = user.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
-                        double particleY = user.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance; // 目の高さ
-                        double particleZ = user.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
+                        // プレイヤーの視線先の位置を計算（この例ではプレイヤーの位置から2ブロック先にパーティクルを表示）
+                        double distance = 1.0;
+                        double particleX = user.getX() + lookDirection.x * distance;
+                        double particleY = user.getEyeY() + lookDirection.y * distance; // 目の高さ
+                        double particleZ = user.getZ() + lookDirection.z * distance;
 
                         // パーティクルを複数発生させるループ
-                        for (int i = 0; i < 5; i++) {
-                            double offsetX = (world.random.nextDouble() - 0.5) * 0.3;
-                            double offsetY = (world.random.nextDouble() - 0.5) * 0.3;
-                            double offsetZ = (world.random.nextDouble() - 0.5) * 0.3;
+                        for (int i = 0; i < 10; i++) {
+                            double offsetX = (world.random.nextDouble() - 0.5) * 0.5;
+                            double offsetY = (world.random.nextDouble() - 0.5) * 0.5;
+                            double offsetZ = (world.random.nextDouble() - 0.5) * 0.5;
 
                             // 視線の先にパーティクルを追加
                             world.addParticle(ParticleTypes.LARGE_SMOKE,
@@ -241,7 +253,6 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         else{
             playerEntity.getItemCooldownManager().set(stack, 20);
         }
-
 
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);

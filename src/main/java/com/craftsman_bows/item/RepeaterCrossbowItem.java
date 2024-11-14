@@ -2,7 +2,6 @@ package com.craftsman_bows.item;
 
 import com.craftsman_bows.init.ModParticleTypes;
 import com.craftsman_bows.init.ModSoundEvents;
-import com.craftsman_bows.interfaces.entity.BypassCooldown;
 import com.craftsman_bows.interfaces.item.CustomArmPoseItem;
 import com.craftsman_bows.interfaces.item.CustomFirstPersonRender;
 import com.craftsman_bows.interfaces.item.CustomUsingMoveItem;
@@ -29,7 +28,6 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
     }
 
     // 変数の定義
-    int useTick = 0;
     float movementSpeed = 5.0f;
     float fov;
 
@@ -174,11 +172,11 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             this.GatlingShot(world, user, stack);
         }
         // あんまり長いこと撃ってると煙を吹き出す
-        if (useTick == 90) {
+        if (useTick == 82) {
             user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PICKUP, 1.0f, 1.5f);
             user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 2.0f);
         }
-        if (useTick >= 90) {
+        if (useTick >= 82) {
             // もくもく警告パーティクル
 
             // プレイヤーの視線方向を取得
@@ -210,7 +208,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             }
         }
         // それでも撃ち続けるとオーバーヒートする
-        if (useTick == 114) {
+        if (useTick >= 102) {
             // サウンド
             user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 1.5f);
             user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1f);
@@ -330,8 +328,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
 
         // ワールドがサーバーなら？
-        if (world instanceof ServerWorld) {
-            ServerWorld serverWorld = (ServerWorld) world;
+        if (world instanceof ServerWorld serverWorld) {
             if (!list.isEmpty()) {
                 this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 2.7f, 3.0f, false, null);
             }
@@ -371,7 +368,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
 
     @Override
     public int getMaxUseTime(ItemStack stack, LivingEntity user) {
-        return 115;
+        return 103;
     }
 
     // インターフェースが欲しがってる処理

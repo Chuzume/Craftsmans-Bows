@@ -53,6 +53,11 @@ public class LongBowItem
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
+        // 途中が寂しいので…
+        if (i == 20) {
+            user.playSound(SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE.value(), 1.0f, 1.0f);
+        }
+
         // チャージ中
         if (i < 40) {
             chargingParticle(world, user);  // パーティクル生成の処理
@@ -70,6 +75,7 @@ public class LongBowItem
     @Override
     void chargeEndParticle(World world, LivingEntity player) {
         super.chargeEndParticle(world, player);
+        player.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 0.8f);
         player.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_4, 1.0f, 1.0f);
     }
 
@@ -82,9 +88,6 @@ public class LongBowItem
 
         fov = Float.NaN;
 
-        // パーティクル
-        shootParticle(world, user);
-
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         ItemStack itemStack = playerEntity.getProjectileType(stack);
         if (itemStack.isEmpty()) {
@@ -96,6 +99,11 @@ public class LongBowItem
         float f = getPullProgress(i);
         if ((double) f < 0.1) {
             return false;
+        }
+
+        // パーティクル
+        if (f >= 1) {
+            shootParticle(world, user);
         }
 
         // ここが放つ処理に見える。
