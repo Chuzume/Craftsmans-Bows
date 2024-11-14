@@ -22,7 +22,6 @@ public class LongBowItem
     }
 
     float fov;
-    boolean fullCharged;
 
     // 弓を引いた時間を取得する処理
     public static float getPullProgress(int useTicks) {
@@ -37,10 +36,16 @@ public class LongBowItem
     // 最初の使用時のアクション
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE, 1.0f, 0.8f);
-        fov = 1f;
-        fullCharged = false;
-        return ItemUsage.consumeHeldItem(world, user, hand);
+        ItemStack itemStack = user.getStackInHand(hand);
+        boolean bl = !user.getProjectileType(itemStack).isEmpty();
+        if (!user.isInCreativeMode() && !bl) {
+            return ActionResult.FAIL;
+        } else {
+            user.setCurrentHand(hand);
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 0.8f);
+            fov = 1f;
+            return ActionResult.CONSUME;
+        }
     }
 
     // アイテムを使用しているときの処理
@@ -49,13 +54,12 @@ public class LongBowItem
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
         // チャージ中
-        if (getPullProgress(i) <= 1.0F && !fullCharged) {
+        if (i < 40) {
             chargingParticle(world, user);  // パーティクル生成の処理
         }
 
         // チャージが完了しているか確認し、完了時に一度だけ処理を実行
-        if (getPullProgress(i) >= 1.0F && !fullCharged) {
-            fullCharged = true;  // 一度だけ実行するためにフラグを設定
+        if (i == 40) {
             chargeEndParticle(world, user);  // パーティクル生成の処理
         }
 
@@ -71,7 +75,6 @@ public class LongBowItem
         }
 
         fov = Float.NaN;
-        fullCharged = false;
 
         // パーティクル
         shootParticle(world, user);

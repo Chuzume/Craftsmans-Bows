@@ -19,8 +19,6 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
         super(settings);
     }
 
-    boolean fullCharged;
-
     // 弓を引いた時間を取得する処理のようだ。今回は書き換えて、0.55以上引き絞ったら強制的に1（フルチャージ）になるようにした
     public static float getPullProgress(int useTicks) {
         float f = (float) useTicks / 20.0f;
@@ -36,22 +34,35 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
         // チャージ中
-        if (getPullProgress(i) <= 1.0F && !fullCharged) {
+        if (i < 10) {
             chargingParticle(world, user);  // パーティクル生成の処理
         }
 
         // チャージが完了しているか確認し、完了時に一度だけ処理を実行
-        if (getPullProgress(i) >= 1.0F && !fullCharged) {
-            fullCharged = true;  // 一度だけ実行するためにフラグを設定
+        if (i == 10) {
             chargeEndParticle(world, user);  // パーティクル生成の処理
         }
+    }
+
+    @Override
+    void chargeEndParticle(World world, LivingEntity player) {
+        super.chargeEndParticle(world, player);
+        player.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 1.2f);
+
     }
 
     // 最初の使用時のアクション
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE, 1.0f, 1.2f);
-        return ItemUsage.consumeHeldItem(world, user, hand);
+        ItemStack itemStack = user.getStackInHand(hand);
+        boolean bl = !user.getProjectileType(itemStack).isEmpty();
+        if (!user.isInCreativeMode() && !bl) {
+            return ActionResult.FAIL;
+        } else {
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 1.2f);
+            user.setCurrentHand(hand);
+            return ActionResult.CONSUME;
+        }
     }
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
@@ -61,9 +72,6 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
         if (!(user instanceof PlayerEntity playerEntity)) {
             return false;
         }
-
-        // チャージリセット
-        fullCharged = false;
 
         // パーティクル
         shootParticle(world, user);
