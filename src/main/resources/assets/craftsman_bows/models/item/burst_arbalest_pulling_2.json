@@ -1,0 +1,6 @@
+{
+  "parent": "craftsman_bows:item/burst_arbalest",
+  "textures": {
+    "layer0": "craftsman_bows:item/burst_arbalest_pulling_2"
+  }
+}
