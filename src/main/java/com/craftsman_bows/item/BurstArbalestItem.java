@@ -36,7 +36,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         ItemStack stack = user.getStackInHand(hand);
 
         // サウンド
-        user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 0.8f);
+        user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 1.1f);
         //user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
 
@@ -175,7 +175,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         // ワールドがサーバーなら
         if (world instanceof ServerWorld serverWorld) {
             if (!list.isEmpty()) {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 3.0f, 2.0f, false, null);
+                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 2.7f, 1.0f, false, null);
             }
         }
     }
