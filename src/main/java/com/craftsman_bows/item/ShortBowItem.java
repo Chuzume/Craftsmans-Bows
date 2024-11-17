@@ -34,12 +34,12 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
         // チャージ中
-        if (i < 10) {
+        if (i < 9) {
             chargingParticle(world, user);
         }
 
         // チャージ完了
-        if (i == 10) {
+        if (i == 9) {
             chargeEndParticle(world, user);
             user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 1.4f );
         }

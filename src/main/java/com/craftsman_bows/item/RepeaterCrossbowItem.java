@@ -137,7 +137,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         if (useTick == 40) {
             user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
             user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_XYLOPHONE.value(), 1.0f, 1.5f);
-
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_3, 1.0f, 2.0f);
 
             // プレイヤーの視線方向を取得
             Vec3d lookDirection = user.getRotationVec(1.0F);
@@ -340,6 +340,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
     protected ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
         ProjectileEntity entity = super.createArrowEntity(world, shooter, weaponStack, projectileStack, critical);
         (entity).setBypassDamageCooldown();
+        (entity).setWeakKnockback();
         return entity;
     }
 

@@ -40,7 +40,7 @@
 	},
 	"custom": {
 		"loom:injected_interfaces": {
-			"net/minecraft/class_1676": ["com/craftsman_bows/interfaces/entity/BypassCooldown"]
+			"net/minecraft/class_1676": ["com/craftsman_bows/interfaces/entity/CraftsmanArrow"]
 		}
 	}
 }
