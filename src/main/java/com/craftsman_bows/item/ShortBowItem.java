@@ -35,19 +35,14 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
 
         // チャージ中
         if (i < 10) {
-            chargingParticle(world, user);  // パーティクル生成の処理
+            chargingParticle(world, user);
         }
 
-        // チャージが完了しているか確認し、完了時に一度だけ処理を実行
+        // チャージ完了
         if (i == 10) {
-            chargeEndParticle(world, user);  // パーティクル生成の処理
+            chargeEndParticle(world, user);
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 1.4f );
         }
-    }
-
-    @Override
-    void chargeEndParticle(World world, LivingEntity player) {
-        super.chargeEndParticle(world, player);
-        player.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 1.2f);
     }
 
     // 最初の使用時のアクション
@@ -99,7 +94,7 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
             if (f < 1) {
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.0f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + f * 0.5f);
             } else {
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.0f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + 0.9f);
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 0.8f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + 0.9f);
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.4f);
             }
         }
