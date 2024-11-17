@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#g/",
+        "gnS",
+        "/SR"
+    ],
+    "key": {
+        "#": "minecraft:dispenser",
+        "g": "minecraft:gold_ingot",
+        "/": "minecraft:stick",
+        "S": "minecraft:string",
+        "R": "minecraft:repeater",
+        "n": "minecraft:netherite_ingot"
+    },
+    "result": {
+        "id": "craftsman_bows:burst_arbalest",
+        "count": 1
+    }
+}
