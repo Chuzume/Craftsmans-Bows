@@ -8,6 +8,7 @@ import com.craftsman_bows.interfaces.item.CustomUsingMoveItem;
 import com.craftsman_bows.interfaces.item.ZoomItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.*;
 import net.minecraft.particle.ParticleTypes;
@@ -336,10 +337,11 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
     // 矢の生成処理
     @Override
     protected ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
-        ProjectileEntity entity = super.createArrowEntity(world, shooter, weaponStack, projectileStack, critical);
-        (entity).setBypassDamageCooldown();
-        //(entity).setWeakKnockback();
-        return entity;
+        Item item = projectileStack.getItem();
+        ArrowItem arrowItem2 = item instanceof ArrowItem ? (ArrowItem) item : (ArrowItem) Items.ARROW;
+        PersistentProjectileEntity persistentProjectileEntity = arrowItem2.createArrow(world, projectileStack, shooter, weaponStack);
+        persistentProjectileEntity.setBypassDamageCooldown();
+        return persistentProjectileEntity;
     }
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。

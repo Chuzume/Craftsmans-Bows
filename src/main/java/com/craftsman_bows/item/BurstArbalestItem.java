@@ -5,11 +5,9 @@ import com.craftsman_bows.interfaces.item.CustomUsingMoveItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsage;
+import net.minecraft.item.*;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -199,7 +197,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
                         user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_SHOOT, 1.0f, 0.8f);
                         user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 2.0f);
                         //user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1.5f);
-                        playerEntity.getItemCooldownManager().set(stack, 20);
+                        playerEntity.getItemCooldownManager().set(stack, 15);
 
                         // プレイヤーの視線方向を取得
                         Vec3d lookDirection = user.getRotationVec(1.0F);
@@ -230,9 +228,11 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
     // 矢の生成処理
     @Override
     protected ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
-        ProjectileEntity entity = super.createArrowEntity(world, shooter, weaponStack, projectileStack, critical);
-        (entity).setBypassDamageCooldown();
-        return entity;
+        Item item = projectileStack.getItem();
+        ArrowItem arrowItem2 = item instanceof ArrowItem ? (ArrowItem) item : (ArrowItem) Items.ARROW;
+        PersistentProjectileEntity persistentProjectileEntity = arrowItem2.createArrow(world, projectileStack, shooter, weaponStack);
+        persistentProjectileEntity.setBypassDamageCooldown();
+        return persistentProjectileEntity;
     }
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
@@ -252,7 +252,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
             playerEntity.getItemCooldownManager().set(stack, 150);
         }
         else{
-            playerEntity.getItemCooldownManager().set(stack, 20);
+            playerEntity.getItemCooldownManager().set(stack, 15);
         }
 
         user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
