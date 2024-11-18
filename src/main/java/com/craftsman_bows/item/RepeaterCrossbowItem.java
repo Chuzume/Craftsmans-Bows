@@ -78,42 +78,40 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             // プレイヤーの視線方向を取得
             Vec3d lookDirection = user.getRotationVec(1.0F);
 
-            // オフセット
-            double offsetUp = -0.3; // 上に0.1ブロック分オフセット
-
-            // ベクトルを取得
-            Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
-            Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
-
             // 出現位置の範囲を設定
             double rangeX = 1.5;
             double rangeY = 1.5;
             double rangeZ = 1.5;
 
+            // オフセット
+            double offsetUp = -0.15; // 上に0.1ブロック分オフセット
+
+            // ベクトルを取得
+            Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+            Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
+
+            // プレイヤーの視線先の位置を計算
+            double distance = 2.0;
+
             // 目標位置（収束先）を設定
-            double distanceToTarget = 0.9; // プレイヤーから目標地点までの距離
-            double targetX = user.getX() + lookDirection.x * distanceToTarget + verticalDirection.x * offsetUp;
-            double targetY = user.getEyeY() + lookDirection.y * distanceToTarget + verticalDirection.y * offsetUp;
-            double targetZ = user.getZ() + lookDirection.z * distanceToTarget + verticalDirection.x * offsetUp;
+            double targetX = user.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
+            double targetY = user.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance;
+            double targetZ = user.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
 
-            // 複数のパーティクルを発生させるループ
-            for (int i = 0; i < 1; i++) {
-                // 視線方向に基づいた初期位置にランダムな偏差を加える
-                double particleX = user.getX() + lookDirection.x * 2.0
-                        + verticalDirection.x * offsetUp
-                        + (world.random.nextDouble() - 0.5) * rangeX;
+            double particleX = user.getX() + lookDirection.x * 2.0
+                    + verticalDirection.x * offsetUp
+                    + (world.random.nextDouble() - 0.5) * rangeX;
 
-                double particleY = user.getEyeY() + lookDirection.y * 2.0
-                        + verticalDirection.y * offsetUp
-                        + (world.random.nextDouble() - 0.5) * rangeY;
+            double particleY = user.getEyeY() + lookDirection.y * 2.0
+                    + verticalDirection.y * offsetUp
+                    + (world.random.nextDouble() - 0.5) * rangeY;
 
-                double particleZ = user.getZ() + lookDirection.z * 2.0
-                        + verticalDirection.z * offsetUp
-                        + (world.random.nextDouble() - 0.5) * rangeZ;
+            double particleZ = user.getZ() + lookDirection.z * 2.0
+                    + verticalDirection.z * offsetUp
+                    + (world.random.nextDouble() - 0.5) * rangeZ;
 
-                // パーティクルを追加し、収束先を設定
-                world.addParticle(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
-            }
+            // 視線の先にパーティクルを追加
+            world.addParticle(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
         }
 
         if (useTick == 15) {
@@ -340,7 +338,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
     protected ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
         ProjectileEntity entity = super.createArrowEntity(world, shooter, weaponStack, projectileStack, critical);
         (entity).setBypassDamageCooldown();
-        (entity).setWeakKnockback();
+        //(entity).setWeakKnockback();
         return entity;
     }
 

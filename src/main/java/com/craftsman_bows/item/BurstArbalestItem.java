@@ -196,8 +196,9 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
 
                     if ((user instanceof PlayerEntity playerEntity) && burstCount == 1)
                     {
-                        user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_SHOOT, 1.0f, 1.0f);
-                        user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1.5f);
+                        user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_SHOOT, 1.0f, 0.8f);
+                        user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 2.0f);
+                        //user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1.5f);
                         playerEntity.getItemCooldownManager().set(stack, 20);
 
                         // プレイヤーの視線方向を取得
@@ -211,12 +212,12 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
 
                         // パーティクルを複数発生させるループ
                         for (int i = 0; i < 10; i++) {
-                            double offsetX = (world.random.nextDouble() - 0.5) * 0.5;
-                            double offsetY = (world.random.nextDouble() - 0.5) * 0.5;
-                            double offsetZ = (world.random.nextDouble() - 0.5) * 0.5;
+                            double offsetX = (world.random.nextDouble() - 0.5) * 0.2;
+                            double offsetY = (world.random.nextDouble() - 0.5) * 0.2;
+                            double offsetZ = (world.random.nextDouble() - 0.5) * 0.2;
 
                             // 視線の先にパーティクルを追加
-                            world.addParticle(ParticleTypes.LARGE_SMOKE,
+                            world.addParticle(ParticleTypes.SMOKE,
                                     particleX, particleY, particleZ,
                                     offsetX, offsetY, offsetZ);
                         }
