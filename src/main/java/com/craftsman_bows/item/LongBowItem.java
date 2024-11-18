@@ -47,7 +47,7 @@ public class LongBowItem
             return ActionResult.FAIL;
         } else {
             user.setCurrentHand(hand);
-            user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 0.8f);
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 1.0f);
             fov = 1f;
             return ActionResult.CONSUME;
         }
@@ -60,7 +60,7 @@ public class LongBowItem
 
         // 途中が寂しいので…
         if (i == 10) {
-            user.playSound(SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE.value(), 1.0f, 1.0f);
+            user.playSound(SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE.value(), 1.0f, 1.2f);
         }
 
         // チャージ中
@@ -117,8 +117,7 @@ public class LongBowItem
             if (f < 1) {
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 0.8f);
             } else {
-                //world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.5f);
-                //world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 1.2f);
                 world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.0f);
             }
         }
