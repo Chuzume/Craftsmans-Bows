@@ -8,9 +8,9 @@ public interface BypassCooldown {
         return false;
     }
 
-    default void setWeakKnockback() {}
+    //default void setWeakKnockback() {}
 
-    default boolean getWeakKnockback() {
-        return false;
-    }
+    //default boolean getWeakKnockback() {
+    //    return false;
+    //}
 }
