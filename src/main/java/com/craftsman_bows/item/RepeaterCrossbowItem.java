@@ -207,7 +207,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             }
         }
         // それでも撃ち続けるとオーバーヒートする
-        if (useTick >= 102) {
+        if (useTick >= 114) {
             // サウンド
             user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 1.5f);
             user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1f);
@@ -369,7 +369,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
 
     @Override
     public int getMaxUseTime(ItemStack stack, LivingEntity user) {
-        return 103;
+        return 115;
     }
 
     // インターフェースが欲しがってる処理
