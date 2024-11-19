@@ -10,6 +10,8 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 import static com.craftsman_bows.CraftsmanBows.Mod_ID;
+import static net.minecraft.item.Items.NETHERITE_INGOT;
+import static net.minecraft.registry.tag.ItemTags.PLANKS;
 
 public class item {
 
@@ -30,11 +32,11 @@ public class item {
     }
 
     // 各アイテムを異なるクラスで生成し、設定済みで登録
-    public static final Item SHORT_BOW = register("shortbow", new ShortBowItem(createSettings("shortbow").maxCount(1).maxDamage(576).enchantable(1)));
-    public static final Item LONG_BOW = register("longbow", new LongBowItem(createSettings("longbow").maxCount(1).maxDamage(576).enchantable(1)));
-    public static final Item SHOT_CROSSBOW = register("shot_crossbow", new ShotCrossbowItem(createSettings("shot_crossbow").maxCount(1).maxDamage(600).enchantable(1)));
-    public static final Item REPEATER_CROSSBOW = register("repeater_crossbow", new RepeaterCrossbowItem(createSettings("repeater_crossbow").maxCount(1).maxDamage(600).enchantable(1)));
-    public static final Item BURST_ARBALEST = register("burst_arbalest", new BurstArbalestItem(createSettings("burst_arbalest").maxCount(1).maxDamage(600).enchantable(1)));
+    public static final Item SHORT_BOW = register("shortbow", new ShortBowItem(createSettings("shortbow").maxCount(1).maxDamage(576).enchantable(1).repairable(PLANKS)));
+    public static final Item LONG_BOW = register("longbow", new LongBowItem(createSettings("longbow").maxCount(1).maxDamage(576).enchantable(1).repairable(PLANKS)));
+    public static final Item SHOT_CROSSBOW = register("shot_crossbow", new ShotCrossbowItem(createSettings("shot_crossbow").maxCount(1).maxDamage(576).enchantable(1).repairable(PLANKS)));
+    public static final Item REPEATER_CROSSBOW = register("repeater_crossbow", new RepeaterCrossbowItem(createSettings("repeater_crossbow").maxCount(1).maxDamage(640).enchantable(1).fireproof().repairable(NETHERITE_INGOT)));
+    public static final Item BURST_ARBALEST = register("burst_arbalest", new BurstArbalestItem(createSettings("burst_arbalest").maxCount(1).maxDamage(900).enchantable(1).fireproof().repairable(NETHERITE_INGOT)));
 
     public static void init() {
 
