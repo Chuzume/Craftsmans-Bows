@@ -71,8 +71,8 @@ public class LongBowItem
         // チャージ完了
         if (i == 29) {
             chargeEndParticle(world, user);
-            user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 0.8f);
-            user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_4, 1.0f, 1.0f);
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 1.0f);
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_4, 1.0f, 1.2f);
         }
 
         // ズーム処理
