@@ -1,0 +1,50 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "craftsman_bows:item/repeater_crossbow"
+    },
+    "on_true": {
+      "type": "minecraft:range_dispatch",
+      "entries": [
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "craftsman_bows:item/repeater_crossbow_pulling_0"
+          },
+          "threshold": 30
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "craftsman_bows:item/repeater_crossbow_pulling_1"
+          },
+          "threshold": 31
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "craftsman_bows:item/repeater_crossbow_pulling_2"
+          },
+          "threshold": 32
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "craftsman_bows:item/repeater_crossbow_shoot"
+          },
+          "threshold": 50
+        }
+      ],
+      "fallback": {
+        "type": "minecraft:model",
+        "model": "craftsman_bows:item/repeater_crossbow"
+      },
+      "property": "minecraft:use_duration",
+      "scale": 1.0
+    },
+    "property": "minecraft:using_item"
+  },
+  "hand_animation_on_swap": false
+}

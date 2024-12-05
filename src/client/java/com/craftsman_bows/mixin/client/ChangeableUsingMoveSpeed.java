@@ -30,7 +30,7 @@ public abstract class ChangeableUsingMoveSpeed extends AbstractClientPlayerEntit
     }
 
     // アイテムの使用の設定
-    @Inject(method = "tickMovement()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/input/Input;tick(ZF)V", shift = At.Shift.AFTER))
+    @Inject(method = "tickMovement()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;shouldSlowDown()Z" , shift = At.Shift.AFTER))
     private void ChangeableWeaponSlowdown(CallbackInfo ci) {
         ItemStack itemStack = target.getActiveItem();
         if (itemStack.getItem() instanceof CustomUsingMoveItem customUsingMoveItem) {

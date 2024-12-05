@@ -1,8 +1,8 @@
 package com.craftsman_bows.item;
 
-import com.craftsman_bows.interfaces.entity.BypassCooldown;
 import com.craftsman_bows.init.ModSoundEvents;
 import com.craftsman_bows.interfaces.item.CustomArmPoseItem;
+import com.craftsman_bows.interfaces.item.CustomFirstPersonRender;
 import com.craftsman_bows.interfaces.item.CustomUsingMoveItem;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
@@ -14,53 +14,120 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
+import net.minecraft.util.ActionResult;
+import net.minecraft.item.consume.UseAction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import com.craftsman_bows.init.ModParticleTypes;
 
 import java.util.List;
 
-public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, CustomArmPoseItem {
+public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMoveItem, CustomArmPoseItem , CustomFirstPersonRender{
     public ShotCrossbowItem(net.minecraft.item.Item.Settings settings) {
         super(settings);
     }
 
     // 変数
-    boolean fullCharged;
+    // 変数の定義
+    int shootStack = 0;
     float movementSpeed = 2.5f;
-    String standbyArmPose = "CROSSBOW_HOLD";
-    String usingArmPose = "CROSSBOW_CHARGE";
 
     // 最初の使用時のアクション
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+    public ActionResult use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         boolean bl = !user.getProjectileType(itemStack).isEmpty();
         if (user.isInCreativeMode() || bl) {
-            fullCharged = false;
+            shootStack = 0;
             user.setCurrentHand(hand);
-            user.playSound(ModSoundEvents.BOW_CHARGE, 1.0f, 1.25f);
-            return TypedActionResult.consume(itemStack);
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 1.25f);
+            return ActionResult.CONSUME;
         }
-        return TypedActionResult.fail(itemStack);
+        return ActionResult.FAIL;
     }
 
     // アイテムを使用しているときの処理？
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+
         movementSpeed = 2.5f;
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
-        // 腕のポーズ変更
-        if (getPullProgress(i) < 1.0) {
-            usingArmPose = "CROSSBOW_CHARGE";
-        } else {
-            usingArmPose = "CROSSBOW_HOLD";
+        // チャージ演出
+        if (i < 20) {
+            // プレイヤーの視線方向を取得
+            Vec3d lookDirection = user.getRotationVec(1.0F);
+
+            // 出現位置の範囲を設定
+            double rangeX = 1.5;
+            double rangeY = 1.5;
+            double rangeZ = 1.5;
+
+            // オフセット
+            double offsetUp = -0.15; // 上に0.1ブロック分オフセット
+
+            // ベクトルを取得
+            Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+            Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
+
+            // プレイヤーの視線先の位置を計算
+            double distance = 2.0;
+
+            // 目標位置（収束先）を設定
+            double targetX = user.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
+            double targetY = user.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance;
+            double targetZ = user.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
+
+            double particleX = user.getX() + lookDirection.x * 2.0
+                    + verticalDirection.x * offsetUp
+                    + (world.random.nextDouble() - 0.5) * rangeX;
+
+            double particleY = user.getEyeY() + lookDirection.y * 2.0
+                    + verticalDirection.y * offsetUp
+                    + (world.random.nextDouble() - 0.5) * rangeY;
+
+            double particleZ = user.getZ() + lookDirection.z * 2.0
+                    + verticalDirection.z * offsetUp
+                    + (world.random.nextDouble() - 0.5) * rangeZ;
+
+            // 視線の先にパーティクルを追加
+            world.addParticle(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
         }
-        if (getPullProgress(i) > 0.9 && !fullCharged) {
-            fullCharged = true;
+
+        // 途中が寂しいので…
+        if (i == 10) {
+            user.playSound(SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE.value(), 1.0f, 1.0f);
+        }
+
+        if (i == 20) {
+            shootStack = 4;
             user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_XYLOPHONE.value(), 1.0f, 1.5f);
             user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 1.1f);
+
+            // プレイヤーの視線方向を取得
+            Vec3d lookDirection = user.getRotationVec(1.0F);
+
+            // オフセット
+            double offsetUp = -0.15; // 上に0.1ブロック分オフセット
+
+            // ベクトルを取得
+            Vec3d rightDirection = lookDirection.crossProduct(new Vec3d(0, 1, 0)).normalize();
+            Vec3d verticalDirection = rightDirection.crossProduct(lookDirection).normalize();
+
+            // プレイヤーの視線先の位置を計算
+            double distance = 2.0;
+            double particleX = user.getX() + lookDirection.x + verticalDirection.x * offsetUp * distance;
+            double particleY = user.getEyeY() + lookDirection.y + verticalDirection.y * offsetUp * distance; // 目の高さ
+            double particleZ = user.getZ() + lookDirection.z + verticalDirection.z * offsetUp * distance;
+
+            // パーティクル発生
+            double offsetX = 0;
+            double offsetY = 0;
+            double offsetZ = 0;
+
+            // 視線の先にパーティクルを追加
+            world.addParticle(ModParticleTypes.CHARGE_END, particleX, particleY, particleZ, offsetX, offsetY, offsetZ);
         }
     }
 
@@ -77,9 +144,7 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {
-        return UseAction.NONE;
-    }
+    public UseAction getUseAction(ItemStack stack) {return UseAction.NONE;}
 
     protected void shootArrow(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float divergence, boolean pickup) {
         float f = EnchantmentHelper.getProjectileSpread(world, stack, shooter, 0.0f);
@@ -101,51 +166,41 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
-    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (!(user instanceof PlayerEntity)) {
-            return;
+    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        if (!(user instanceof PlayerEntity playerEntity)) {
+            return false;
         }
 
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
-        PlayerEntity playerEntity = (PlayerEntity) user;
         ItemStack itemStack = playerEntity.getProjectileType(stack);
         if (itemStack.isEmpty()) {
-            return;
+            return false;
         }
 
         // 使用時間0.1未満では使用をキャンセルする処理のようだ
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
         float f = getPullProgress(i);
         if ((double) f < 1) {
-            return;
+            return false;
         }
 
         // ここが放つ処理に見える。
         List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
 
-
         if (world instanceof ServerWorld serverWorld) {
             if (!list.isEmpty()) {
                 this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 0.0f, true);
-                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
-                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
-                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
-                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
+                for (int i2 = 0; i2< shootStack; i2++) {
+                    this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
+                }
+                shootStack = 0;
             }
         }
 
         world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 1.0f);
-        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
+        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
 
-        // 腕振る処理
-        Hand activeHand = user.getActiveHand();
-        if (activeHand == Hand.MAIN_HAND) {
-            // 現在のアクティブな手がメインハンドなら、メインハンドを振る
-            user.swingHand(Hand.MAIN_HAND);
-        } else if (activeHand == Hand.OFF_HAND) {
-            // 現在のアクティブな手がオフハンドなら、オフハンドを振る
-            user.swingHand(Hand.OFF_HAND);
-        }
+        return true;
     }
 
     // インターフェース「CustomUsingMoveItem」として必要な処理
@@ -159,14 +214,24 @@ public class ShotCrossbowItem extends BowItem implements CustomUsingMoveItem, Cu
         movementSpeed = Float.NaN;
     }
 
+    @Override
+    public String getUsingFirstPersonRender() {
+        return "CROSSBOW_HOLD";
+    }
+
+    @Override
+    public String getStandbyFirstPersonRender() {
+        return null;
+    }
+
     // インターフェス「CustomArmPoseItem」として必要な処理
     @Override
     public String getUsingArmPose() {
-        return usingArmPose;
+        return "CROSSBOW_HOLD";
     }
 
     @Override
     public String getStandbyArmPose() {
-        return standbyArmPose;
+        return null;
     }
 }

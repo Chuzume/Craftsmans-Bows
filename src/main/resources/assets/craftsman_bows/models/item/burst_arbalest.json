@@ -3,28 +3,6 @@
     "textures": {
         "layer0": "craftsman_bows:item/burst_arbalest"
     },
-    "overrides": [
-        {
-            "predicate": {
-                "pulling": 1
-            },
-            "model": "craftsman_bows:item/burst_arbalest_pulling_0"
-        },
-        {
-            "predicate": {
-                "pulling": 1,
-                "pull": 0.5
-            },
-            "model": "craftsman_bows:item/burst_arbalest_pulling_1"
-        },
-        {
-            "predicate": {
-                "pulling": 1,
-                "pull": 1
-            },
-            "model": "craftsman_bows:item/burst_arbalest_pulling_2"
-        }
-    ],
     "display": {
         "thirdperson_righthand": {
             "rotation": [ -97, -90, -55 ],

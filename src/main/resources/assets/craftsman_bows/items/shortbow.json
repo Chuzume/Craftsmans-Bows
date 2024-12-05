@@ -1,0 +1,35 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "craftsman_bows:item/shortbow"
+    },
+    "on_true": {
+      "type": "minecraft:range_dispatch",
+      "entries": [
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "craftsman_bows:item/shortbow_pulling_1"
+          },
+          "threshold": 0.25
+        },
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "craftsman_bows:item/shortbow_pulling_2"
+          },
+          "threshold": 0.5
+        }
+      ],
+      "fallback": {
+        "type": "minecraft:model",
+        "model": "craftsman_bows:item/shortbow_pulling_0"
+      },
+      "property": "minecraft:use_duration",
+      "scale": 0.05
+    },
+    "property": "minecraft:using_item"
+  }
+}

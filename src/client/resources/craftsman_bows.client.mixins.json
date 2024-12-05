@@ -7,9 +7,7 @@
     "ChangeableUsingMoveSpeed",
     "FovMixin",
     "HeldItemRendererMixin",
-    "NoUsingSlowdownMixin",
-    "PlayerEntityRenderStateMixin",
-    "UpdateHandStateMixin"
+    "NoUsingSlowdownMixin"
   ],
   "injectors": {
     "defaultRequire": 1
