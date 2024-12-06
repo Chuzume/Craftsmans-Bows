@@ -232,6 +232,6 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
 
     @Override
     public String getStandbyArmPose() {
-        return null;
+        return "ITEM";
     }
 }
