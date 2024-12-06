@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "craftsman_bows",
-	"version": "1.1.0",
+	"version": "1.1.2",
 	"name": "Craftsman's bows",
 	"description": "Add some vanilla-like ranged-weapons.",
 	"authors": [
@@ -30,8 +30,8 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": ">=1.21.2",
+		"fabricloader": ">=0.16.9",
+		"minecraft": "1.21.4",
 		"java": ">=21",
 		"fabric-api": "*"
 	},
