@@ -33,6 +33,15 @@ public abstract class NoUsingSlowdownMixin extends AbstractClientPlayerEntity {
     protected abstract boolean canSprint();
 
     @Shadow
+    protected abstract boolean isBlind();
+
+    @Shadow
+    protected abstract boolean isRidingCamel();
+
+    @Shadow
+    public abstract boolean shouldSlowDown();
+
+    @Shadow
     protected abstract boolean canVehicleSprint(Entity vehicle);
 
     public NoUsingSlowdownMixin(ClientWorld world, GameProfile profile) {
@@ -52,5 +61,13 @@ public abstract class NoUsingSlowdownMixin extends AbstractClientPlayerEntity {
         ItemStack itemStack = target.getActiveItem();
         if (itemStack.getItem() instanceof CanSprintWhileUsing) return false;
         else return instance.isUsingItem();
+    }
+
+    // そしてアイテムを持っているなら、ダッシュを中断すべきではない
+    @Inject(method = "shouldStopSprinting", at = @At("TAIL"), cancellable = true)
+    private void ignoreShouldStopSprint(CallbackInfoReturnable<Boolean> cir) {
+        ItemStack itemStack = target.getActiveItem();
+        if (itemStack.getItem() instanceof CanSprintWhileUsing)
+            cir.setReturnValue(this.isGliding() || this.isBlind() || this.shouldSlowDown() || this.hasVehicle() && !this.isRidingCamel());
     }
 }
