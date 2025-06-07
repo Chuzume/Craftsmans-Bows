@@ -1,15 +1,17 @@
 package com.craftsman_bows.item;
 
 import com.craftsman_bows.init.ModParticleTypes;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BowItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class CraftsmanBowItem extends BowItem {
+public abstract class CraftsmanBowItem extends BowItem {
 
-    public CraftsmanBowItem(Settings settings) {
+    public CraftsmanBowItem(net.minecraft.item.Item.Settings settings) {
         super(settings);
     }
 
@@ -56,7 +58,7 @@ public class CraftsmanBowItem extends BowItem {
             double offsetZ = 0;
 
             // 視線の先にパーティクルを追加
-            world.addParticle(ModParticleTypes.CHARGE_END,
+            world.addParticleClient(ModParticleTypes.CHARGE_END,
                     particleX, particleY, particleZ,
                     offsetX, offsetY, offsetZ);
         }
@@ -105,7 +107,7 @@ public class CraftsmanBowItem extends BowItem {
             double offsetZ = 0;
 
             // 視線の先にパーティクルを追加
-            world.addParticle(ModParticleTypes.SHOOT,
+            world.addParticleClient(ModParticleTypes.SHOOT,
                     particleX, particleY, particleZ,
                     offsetX, offsetY, offsetZ);
         }
@@ -170,7 +172,7 @@ public class CraftsmanBowItem extends BowItem {
                     + (world.random.nextDouble() - 0.5) * rangeZ;
 
             // パーティクルを追加し、収束先を設定
-            world.addParticle(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
+            world.addParticleClient(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
         }
     }
 }

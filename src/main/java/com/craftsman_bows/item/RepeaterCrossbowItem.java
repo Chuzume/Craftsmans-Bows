@@ -112,7 +112,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
                     + (world.random.nextDouble() - 0.5) * rangeZ;
 
             // 視線の先にパーティクルを追加
-            world.addParticle(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
+            world.addParticleClient(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
         }
 
         if (useTick == 15) {
@@ -161,7 +161,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
                 double offsetZ = (world.random.nextDouble() - 0.5) * 1;
 
                 // 視線の先にパーティクルを追加
-                world.addParticle(ModParticleTypes.CHARGE_END,
+                world.addParticleClient(ModParticleTypes.CHARGE_END,
                         particleX, particleY, particleZ,
                         offsetX, offsetY, offsetZ);
             }
@@ -200,7 +200,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             double offsetZ = (world.random.nextDouble() - 0.5) * 0.3;
 
             // 視線の先にパーティクルを追加
-            world.addParticle(ParticleTypes.SMOKE,
+            world.addParticleClient(ParticleTypes.SMOKE,
                     particleX, particleY, particleZ,
                     offsetX, offsetY, offsetZ);
         }
@@ -234,7 +234,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             double offsetZ = (world.random.nextDouble() - 0.5) * 0.3;
 
             // 視線の先にパーティクルを追加
-            world.addParticle(ParticleTypes.LAVA,
+            world.addParticleClient(ParticleTypes.LAVA,
                     particleX, particleY, particleZ,
                     offsetX, offsetY, offsetZ);
         }
@@ -279,7 +279,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
                 double offsetZ = (world.random.nextDouble() - 0.5) * 0.3;
 
                 // 視線の先にパーティクルを追加
-                world.addParticle(ParticleTypes.LARGE_SMOKE,
+                world.addParticleClient(ParticleTypes.LARGE_SMOKE,
                         particleX, particleY, particleZ,
                         offsetX, offsetY, offsetZ);
 
@@ -333,7 +333,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
             double offsetZ = (world.random.nextDouble() - 0.5) * 1;
 
             // 視線の先にパーティクルを追加
-            world.addParticle(ParticleTypes.CRIT,
+            world.addParticleClient(ParticleTypes.CRIT,
                     particleX, particleY, particleZ,
                     offsetX, offsetY, offsetZ);
         }

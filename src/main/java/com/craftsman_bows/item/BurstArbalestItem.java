@@ -3,6 +3,7 @@ package com.craftsman_bows.item;
 import com.craftsman_bows.init.ModSoundEvents;
 import com.craftsman_bows.interfaces.item.CustomUsingMoveItem;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
@@ -17,6 +18,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import com.craftsman_bows.init.ModComponents;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -166,7 +168,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         double offsetZ = (world.random.nextDouble() - 0.5) * 1;
 
         // 視線の先にパーティクルを追加
-        world.addParticle(ParticleTypes.CRIT,
+        world.addParticleClient(ParticleTypes.CRIT,
                 particleX, particleY, particleZ,
                 offsetX, offsetY, offsetZ);
 
@@ -180,10 +182,9 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
 
     // 持ってる間の処理…？
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+    public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
         if (entity instanceof LivingEntity user) {
-            if (selected | user.getOffHandStack().equals(stack)) {
-
+            if (user.getMainHandStack().equals(stack) | user.getOffHandStack().equals(stack)) {
                 int burstCount = stack.getOrDefault(ModComponents.BURST_COUNT, 0);
 
                 if (burstCount >= 1) {
@@ -192,8 +193,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
                     // 更新した値を stack.set() に渡して保存
                     stack.set(ModComponents.BURST_COUNT, burstCount - 1);
 
-                    if ((user instanceof PlayerEntity playerEntity) && burstCount == 1)
-                    {
+                    if ((user instanceof PlayerEntity playerEntity) && burstCount == 1) {
                         user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_SHOOT, 1.0f, 0.8f);
                         user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 2.0f);
                         //user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1.5f);
@@ -215,7 +215,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
                             double offsetZ = (world.random.nextDouble() - 0.5) * 0.2;
 
                             // 視線の先にパーティクルを追加
-                            world.addParticle(ParticleTypes.SMOKE,
+                            world.addParticleClient(ParticleTypes.SMOKE,
                                     particleX, particleY, particleZ,
                                     offsetX, offsetY, offsetZ);
                         }

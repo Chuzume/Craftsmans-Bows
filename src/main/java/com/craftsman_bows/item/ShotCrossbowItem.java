@@ -91,7 +91,7 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
                     + (world.random.nextDouble() - 0.5) * rangeZ;
 
             // 視線の先にパーティクルを追加
-            world.addParticle(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
+            world.addParticleClient(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
         }
 
         // 途中が寂しいので…
@@ -127,7 +127,7 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
             double offsetZ = 0;
 
             // 視線の先にパーティクルを追加
-            world.addParticle(ModParticleTypes.CHARGE_END, particleX, particleY, particleZ, offsetX, offsetY, offsetZ);
+            world.addParticleClient(ModParticleTypes.CHARGE_END, particleX, particleY, particleZ, offsetX, offsetY, offsetZ);
         }
     }
 
