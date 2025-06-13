@@ -4,10 +4,9 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ArmPoseMixin",
-    "ChangeableUsingMoveSpeed",
+    "CustomUsingMoveSpeedMixin",
     "FovMixin",
-    "HeldItemRendererMixin",
-    "NoUsingSlowdownMixin"
+    "HeldItemRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
