@@ -77,9 +77,6 @@ public abstract class CustomUsingMoveSpeedMixin extends AbstractClientPlayerEnti
     // 特定のアイテムを持っていればアイテム使用中でもダッシュができるように
     @Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;canStartSprinting()Z"))
         private boolean canStartDoubleTapSprint(ClientPlayerEntity instance) {
-        if (ticksLeftToDoubleTapSprint > 0) {
-            System.out.println("ticksLeftToDoubleTapSprint: " + ticksLeftToDoubleTapSprint);
-        }
 
         // 移動速度下がらないアイテムを使っている場合
         if (this.isIgnoreSlowdown()) {
