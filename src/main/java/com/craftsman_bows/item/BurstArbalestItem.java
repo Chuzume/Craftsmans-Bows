@@ -37,7 +37,6 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
 
         // サウンド
         user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 1.1f);
-        //user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
 
         // 腕振る処理
@@ -123,14 +122,14 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
     }
 
     // 矢を発射する処理
-    public void burstShot(ItemStack stack,ServerWorld world, LivingEntity user) {
+    public void burstShot(ItemStack stack, ServerWorld world, LivingEntity user) {
 
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         ItemStack itemStack = user.getProjectileType(stack);
 
         //　弾切れ時の処理
         if (itemStack.isEmpty()) {
-            user.playSound(SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON, 1.0f, 1.0f);
+            world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON, SoundCategory.PLAYERS, 1.0f, 1.0f);
             return;
         }
 
@@ -138,7 +137,8 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         List<ItemStack> list = BowItem.load(stack, itemStack, user);
 
         // 音を鳴らす処理
-        user.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 1.0f, 1.2f);
+        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.2f);
+
 
         // 後ろに下がっていく
         float g = user.getYaw();
@@ -183,12 +183,6 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
 
         if (entity instanceof LivingEntity user) {
-
-            double d = user.getX();
-            double e = user.getY();
-            double f = user.getZ();
-            world.spawnParticles(ParticleTypes.SMOKE, d, e, f, 0.0, 0.0, 0.0);
-
             if (user.getMainHandStack().equals(stack) | user.getOffHandStack().equals(stack)) {
                 int burstCount = stack.getOrDefault(ModComponents.BURST_COUNT, 0);
 
@@ -199,9 +193,8 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
                     stack.set(ModComponents.BURST_COUNT, burstCount - 1);
 
                     if ((user instanceof PlayerEntity playerEntity) && burstCount == 1) {
-                        user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_SHOOT, 1.0f, 0.8f);
-                        user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 2.0f);
-                        //user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1.5f);
+                        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_COG_CROSSBOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 0.8f);
+                        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, SoundCategory.PLAYERS, 1.0f, 2.0f);
                         playerEntity.getItemCooldownManager().set(stack, 15);
 
                         // プレイヤーの視線方向を取得
@@ -213,17 +206,8 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
                         double particleY = user.getEyeY() + lookDirection.y * distance; // 目の高さ
                         double particleZ = user.getZ() + lookDirection.z * distance;
 
-                        // パーティクルを複数発生させるループ
-                        for (int i = 0; i < 10; i++) {
-                            double offsetX = (world.random.nextDouble() - 0.5) * 0.2;
-                            double offsetY = (world.random.nextDouble() - 0.5) * 0.2;
-                            double offsetZ = (world.random.nextDouble() - 0.5) * 0.2;
-
-                            // 視線の先にパーティクルを追加
-                            world.addParticleClient(ParticleTypes.SMOKE,
-                                    particleX, particleY, particleZ,
-                                    offsetX, offsetY, offsetZ);
-                        }
+                        // 視線の先にパーティクルを追加
+                        world.spawnParticles(ParticleTypes.SMOKE, particleX, particleY, particleZ, 10, 0.0, 0.0, 0.0, 0.1);
                     }
                 }
             }
