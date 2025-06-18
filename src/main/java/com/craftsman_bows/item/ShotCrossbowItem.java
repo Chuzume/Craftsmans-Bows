@@ -30,7 +30,6 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
     // 変数
     // 変数の定義
     int shootStack = 0;
-    float movementSpeed = 2.5f;
 
     // 最初の使用時のアクション
     @Override
@@ -50,7 +49,6 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
 
-        movementSpeed = 2.5f;
         int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
         // チャージ演出
@@ -206,12 +204,11 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
     // インターフェース「CustomUsingMoveItem」として必要な処理
     @Override
     public float getMovementSpeed() {
-        return movementSpeed;
+        return 0.5f;
     }
 
     @Override
     public void resetMovementSpeed() {
-        movementSpeed = Float.NaN;
     }
 
     @Override

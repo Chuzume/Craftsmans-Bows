@@ -11,6 +11,7 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.*;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -31,7 +32,6 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
     // 最初の使用時のアクション
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-
 
         ItemStack stack = user.getStackInHand(hand);
 
@@ -66,7 +66,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         }
 
         // チャージ段階ごと
-        if (useTick == 20 | useTick == 45 |useTick == 70) {
+        if (useTick == 20 | useTick == 45 | useTick == 70) {
             chargeEndParticle(world, user);
         }
 
@@ -115,7 +115,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         // サーバーのみ
         if (world instanceof ServerWorld) {
             // チャージカウントが進む
-            if (useTick == 10 | useTick == 15 |useTick == 20 | useTick == 35 | useTick == 40 | useTick == 45 | useTick == 60 | useTick == 65 |useTick == 70 ) {
+            if (useTick == 10 | useTick == 15 | useTick == 20 | useTick == 35 | useTick == 40 | useTick == 45 | useTick == 60 | useTick == 65 | useTick == 70) {
                 int count = stack.getOrDefault(ModComponents.BURST_STACK, 0);
                 stack.set(ModComponents.BURST_STACK, ++count);
             }
@@ -123,11 +123,10 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
     }
 
     // 矢を発射する処理
-    public void burstShot(World world, LivingEntity user, ItemStack stack) {
+    public void burstShot(ItemStack stack,ServerWorld world, LivingEntity user) {
 
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
-        PlayerEntity playerEntity = (PlayerEntity) user;
-        ItemStack itemStack = playerEntity.getProjectileType(stack);
+        ItemStack itemStack = user.getProjectileType(stack);
 
         //　弾切れ時の処理
         if (itemStack.isEmpty()) {
@@ -136,14 +135,14 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         }
 
         // 弓につがえた矢を取得している？
-        List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
+        List<ItemStack> list = BowItem.load(stack, itemStack, user);
 
         // 音を鳴らす処理
         user.playSound(SoundEvents.ENTITY_ARROW_SHOOT, 1.0f, 1.2f);
 
         // 後ろに下がっていく
-        float g = playerEntity.getYaw();
-        float h = playerEntity.getPitch();
+        float g = user.getYaw();
+        float h = user.getPitch();
         float j = -MathHelper.sin(g * (float) (Math.PI / 180.0)) * MathHelper.cos(h * (float) (Math.PI / 180.0));
         float k = -MathHelper.sin(h * (float) (Math.PI / 180.0));
         float l = MathHelper.cos(g * (float) (Math.PI / 180.0)) * MathHelper.cos(h * (float) (Math.PI / 180.0));
@@ -151,7 +150,8 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         j *= (float) (0.02 / m) * -1;
         k *= (float) (0.02 / m) * -1;
         l *= (float) (0.02 / m) * -1;
-        playerEntity.addVelocity(j, k, l);
+        user.addVelocity(j, k, l);
+        user.velocityModified = true;
 
         // プレイヤーの視線方向を取得
         Vec3d lookDirection = user.getRotationVec(1.0F);
@@ -173,22 +173,27 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
                 offsetX, offsetY, offsetZ);
 
         // ワールドがサーバーなら
-        if (world instanceof ServerWorld serverWorld) {
-            if (!list.isEmpty()) {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 2.7f, 1.0f, false, null);
-            }
+        if (!list.isEmpty()) {
+            this.shootAll(world, user, user.getActiveHand(), stack, list, 2.7f, 1.0f, false, null);
         }
     }
 
-    // 持ってる間の処理…？
+    // 持ってる間の処理
     @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
+
         if (entity instanceof LivingEntity user) {
+
+            double d = user.getX();
+            double e = user.getY();
+            double f = user.getZ();
+            world.spawnParticles(ParticleTypes.SMOKE, d, e, f, 0.0, 0.0, 0.0);
+
             if (user.getMainHandStack().equals(stack) | user.getOffHandStack().equals(stack)) {
                 int burstCount = stack.getOrDefault(ModComponents.BURST_COUNT, 0);
 
                 if (burstCount >= 1) {
-                    burstShot(world, user, stack);
+                    burstShot(stack, world, user);
 
                     // 更新した値を stack.set() に渡して保存
                     stack.set(ModComponents.BURST_COUNT, burstCount - 1);
@@ -242,7 +247,6 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
             return false;
         }
 
-
         int burstStack = stack.getOrDefault(ModComponents.BURST_STACK, 0);
         stack.set(ModComponents.BURST_COUNT, burstStack);
         stack.remove(ModComponents.BURST_STACK);
@@ -250,8 +254,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         // バースト数に応じたクールタイムを設定
         if (burstStack >= 1) {
             playerEntity.getItemCooldownManager().set(stack, 150);
-        }
-        else{
+        } else {
             playerEntity.getItemCooldownManager().set(stack, 15);
         }
 
@@ -271,7 +274,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
 
     @Override
     public float getMovementSpeed() {
-        return 2.5f;
+        return 0.5f;
     }
 
     @Override
