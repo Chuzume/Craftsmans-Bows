@@ -237,7 +237,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
 
         // バースト数に応じたクールタイムを設定
         if (burstStack >= 1) {
-            playerEntity.getItemCooldownManager().set(stack, 150);
+            playerEntity.getItemCooldownManager().set(stack, 2000);
         } else {
             playerEntity.getItemCooldownManager().set(stack, 15);
         }
