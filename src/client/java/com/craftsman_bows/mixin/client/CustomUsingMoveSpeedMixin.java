@@ -46,15 +46,10 @@ public abstract class CustomUsingMoveSpeedMixin extends AbstractClientPlayerEnti
     @Shadow
     protected int ticksLeftToDoubleTapSprint;
 
+    @Shadow public abstract void tick();
+
     public CustomUsingMoveSpeedMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
-    }
-
-    @Unique
-    // 使用中でも移動速度が下がらないアイテムを使っている
-    private boolean isIgnoreSlowdown() {
-        ItemStack itemStack = target.getActiveItem();
-        return (itemStack.getItem() instanceof CanSprintWhileUsing);
     }
 
     // アイテム使用時には移動速度が0.2倍になるので、5倍すれば元の速度に戻るってわけだ
@@ -65,7 +60,7 @@ public abstract class CustomUsingMoveSpeedMixin extends AbstractClientPlayerEnti
             this.forwardSpeed *= 5.0F;
         }
         // 移動速度を変更できるものは、5倍したあとに倍率かけて速度を変更する
-            ItemStack itemStack = target.getActiveItem();
+        ItemStack itemStack = target.getActiveItem();
         if (itemStack.getItem() instanceof CustomUsingMoveItem customUsingMoveItem) {
             float movementSpeed = customUsingMoveItem.getMovementSpeed();
             this.sidewaysSpeed *= 5.0f * movementSpeed;
@@ -74,40 +69,74 @@ public abstract class CustomUsingMoveSpeedMixin extends AbstractClientPlayerEnti
         }
     }
 
-    // 特定のアイテムを持っていればアイテム使用中でもダッシュができるように
-    @Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;canStartSprinting()Z"))
-        private boolean canStartDoubleTapSprint(ClientPlayerEntity instance) {
+    @Unique
+    private boolean wasPressingForwardKeyLastTick = false;
 
-        // 移動速度下がらないアイテムを使っている場合
-        if (this.isIgnoreSlowdown()) {
-            return !this.isSprinting()
-            && this.input.hasForwardMovement()
-            && this.canSprint()
-            && !this.isBlind()
-            && (!this.hasVehicle() || this.canVehicleSprint(this.getVehicle()))
-            && (!this.isGliding() || this.isSubmergedInWater())
-            && (!this.shouldSlowDown() || this.isSubmergedInWater())
-            && (!this.isTouchingWater() || this.isSubmergedInWater());
+    // アイテム使用しつつもダッシュ可能になる
+    @Inject(method = "tickMovement", at = @At(value = "TAIL"))
+    private void canStartDoubleTapSprint(CallbackInfo ci) {
+        if (ticksLeftToDoubleTapSprint > 0) {
+            System.out.println("ticksLeftToDoubleTapSprint: " + this.ticksLeftToDoubleTapSprint);
+        }
+        boolean isPressingForward = this.canStartUsingSprinting(); // 今回のフレームの状態
+
+        // キーが「今押されていて、前は押されていなかった」時だけ処理する
+        if (isPressingForward && !wasPressingForwardKeyLastTick) {
+
+            // 1回だけ実行される処理（押した瞬間）
+            if (this.ticksLeftToDoubleTapSprint > 0) {
+                this.setSprinting(true);
+            } else {
+                this.ticksLeftToDoubleTapSprint = 7;
+            }
+
+            if (this.input.playerInput.sprint()) {
+                this.setSprinting(true);
+            }
         }
 
-        // そうでない場合、元のメソッドの処理をそっくりそのまま実行する。
-        else return !this.isSprinting()
-                && this.input.hasForwardMovement()
-                && this.canSprint()
-                && !this.isUsingItem()
-                && !this.isBlind()
-                && (!this.hasVehicle() || this.canVehicleSprint(this.getVehicle()))
-                && (!this.isGliding() || this.isSubmergedInWater())
-                && (!this.shouldSlowDown() || this.isSubmergedInWater())
-                && (!this.isTouchingWater() || this.isSubmergedInWater());
+        // 状態を記録（次の tick のために）
+        wasPressingForwardKeyLastTick = isPressingForward;
     }
+
 
     // 移動速度下がらないアイテムを使っている場合、アイテム使用中はticksLeftToDoubleTapSprintが0になるのを無効化する
     @Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
     private boolean cancelWeaponSlowdown(ClientPlayerEntity instance) {
         if (this.isIgnoreSlowdown()) {
             return false;
+        } else return instance.isUsingItem();
+    }
+
+    // 使用中でも移動速度が下がらないアイテムを使っている
+    @Unique
+    private boolean isIgnoreSlowdown() {
+        ItemStack itemStack = target.getActiveItem();
+        return (itemStack.getItem() instanceof CanSprintWhileUsing);
+    }
+
+    // CanStartSprintをちょっといじったもの。アイテム使用中でもダッシュできるようにするのに使う。
+    @Unique
+    private boolean canStartUsingSprinting() {
+        // 移動速度下がらないアイテムを使っている場合、CanStartSprintからisUsingItemのチェックをスキップしたものになる
+        if (this.isIgnoreSlowdown()) {
+            return !this.isSprinting()
+                    && this.input.hasForwardMovement()
+                    && this.canSprint()
+                    && !this.isBlind()
+                    && (!this.hasVehicle() || this.canVehicleSprint(this.getVehicle()))
+                    && (!this.isGliding() || this.isSubmergedInWater())
+                    && (!this.shouldSlowDown() || this.isSubmergedInWater())
+                    && (!this.isTouchingWater() || this.isSubmergedInWater());
         }
-        else return instance.isUsingItem();
+        // そうでない場合、元のCanStartSprintの条件になる
+        else return !this.isSprinting()
+                && this.input.hasForwardMovement()
+                && this.canSprint()
+                && !this.isBlind()
+                && (!this.hasVehicle() || this.canVehicleSprint(this.getVehicle()))
+                && (!this.isGliding() || this.isSubmergedInWater())
+                && (!this.shouldSlowDown() || this.isSubmergedInWater())
+                && (!this.isTouchingWater() || this.isSubmergedInWater());
     }
 }
