@@ -29,7 +29,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
     }
 
     // 変数の定義
-    float movementSpeed = 5.0f;
+    float movementSpeed = 1.0f;
     float fov;
 
     // 最初の使用時のアクション
@@ -42,7 +42,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         user.playSound(SoundEvents.BLOCK_IRON_DOOR_OPEN, 1.0f, 2f);
 
         // 変数リセット
-        movementSpeed = 3.0f;
+        movementSpeed = 1.0f;
         fov = Float.NaN;
 
         // 腕振る処理
@@ -63,7 +63,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
         int useTick = this.getMaxUseTime(stack, user) - remainingUseTicks;
 
         // 徐々に移動速度が下がっていく
-        movementSpeed = 3.0f - (useTick * 0.1f);
+        movementSpeed = 1.0f - (useTick * 0.03f);
 
         // 移動速度が負になると操作方向が逆になるので、0未満にならないようにする
         if (movementSpeed <= 0) {

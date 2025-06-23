@@ -7,7 +7,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class CraftsmanBowItem extends BowItem {
+public abstract class CraftsmanBowItem extends BowItem {
 
     public CraftsmanBowItem(net.minecraft.item.Item.Settings settings) {
         super(settings);
