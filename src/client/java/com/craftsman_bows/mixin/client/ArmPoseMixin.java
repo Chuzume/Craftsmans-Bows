@@ -1,6 +1,7 @@
 package com.craftsman_bows.mixin.client;
 
 import com.craftsman_bows.interfaces.item.CustomArmPoseItem;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -12,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(net.minecraft.client.render.entity.PlayerEntityRenderer.class)
 
-public abstract class ArmPoseMixin {
-    @Inject(method = "getArmPose(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/Hand;)Lnet/minecraft/client/render/entity/model/BipedEntityModel$ArmPose;", at = @At("TAIL"), cancellable = true)
-    private static void getArmPose(PlayerEntity player, ItemStack stack, Hand hand, CallbackInfoReturnable<BipedEntityModel.ArmPose> cir) {
+public class ArmPoseMixin {
+    @Inject(method = "getArmPose", at = @At("TAIL"), cancellable = true)
+    private static void getArmPose(AbstractClientPlayerEntity player, Hand hand, CallbackInfoReturnable<BipedEntityModel.ArmPose> cir) {
 
         ItemStack itemStack = player.getStackInHand(hand);
 

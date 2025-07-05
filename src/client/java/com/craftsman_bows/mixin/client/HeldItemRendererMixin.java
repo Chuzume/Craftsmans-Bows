@@ -3,8 +3,8 @@ package com.craftsman_bows.mixin.client;
 import com.craftsman_bows.interfaces.item.CustomFirstPersonRender;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -36,8 +36,15 @@ public class HeldItemRendererMixin {
     }
 
     @Shadow
-    public void renderItem(LivingEntity entity, ItemStack stack, ItemDisplayContext renderMode, MatrixStack matrices, VertexConsumerProvider vertexConsumer, int light) {
-    }
+    public void renderItem(
+            LivingEntity entity,
+            ItemStack stack,
+            ModelTransformationMode renderMode,
+            boolean leftHanded,
+            MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers,
+            int light
+    ){}
 
     // 手持ちのアイテムの「getFirstPersonRender」の結果に従ってレンダリングする
     @Inject(method = "renderFirstPersonItem", at = @At(value = "HEAD"), cancellable = true)
@@ -75,7 +82,7 @@ public class HeldItemRendererMixin {
                     matrices.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees((float) i * 45.0F));
 
                     // 描画
-                    this.renderItem(player, item, bl3 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, matrices, vertexConsumers, light);
+                    this.renderItem(player, item, bl3 ? ModelTransformationMode.FIRST_PERSON_RIGHT_HAND : ModelTransformationMode.FIRST_PERSON_LEFT_HAND, !bl3, matrices, vertexConsumers, light);
                     // ターゲットメソッドの処理を中断し、アイテムが二重に描画されるのを防ぐ
                     ci.cancel();
                 }
@@ -98,7 +105,7 @@ public class HeldItemRendererMixin {
                         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float) i * 10.0F));
                     }
                     // 描画
-                    this.renderItem(player, item, bl3 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, matrices, vertexConsumers, light);
+                    this.renderItem(player, item, bl3 ? ModelTransformationMode.FIRST_PERSON_RIGHT_HAND : ModelTransformationMode.FIRST_PERSON_LEFT_HAND,!bl3 ,matrices, vertexConsumers, light);
                     // ターゲットメソッドの処理を中断し、アイテムが二重に描画されるのを防ぐ
                     ci.cancel();
                 }
