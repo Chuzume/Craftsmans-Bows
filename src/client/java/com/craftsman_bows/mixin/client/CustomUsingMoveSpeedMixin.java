@@ -8,6 +8,7 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,7 +33,7 @@ public abstract class CustomUsingMoveSpeedMixin extends AbstractClientPlayerEnti
     protected abstract boolean canSprint();
 
     @Shadow
-    protected abstract boolean isBlind();
+    protected abstract boolean isWalking();
 
     @Shadow
     public Input input = new Input();
@@ -50,6 +51,15 @@ public abstract class CustomUsingMoveSpeedMixin extends AbstractClientPlayerEnti
 
     public CustomUsingMoveSpeedMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
+    }
+
+
+    @Inject(method = "tickMovement()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;shouldSlowDown()Z" , shift = At.Shift.AFTER))
+    private void ChangeableWeaponSlowdown(CallbackInfo ci) {
+        if (this.isIgnoreSlowdown()) {
+            this.sidewaysSpeed *= 5.0F;
+            this.forwardSpeed *= 5.0F;
+        }
     }
 
     // アイテム使用時には移動速度が0.2倍になるので、5倍すれば元の速度に戻るってわけだ
@@ -119,12 +129,11 @@ public abstract class CustomUsingMoveSpeedMixin extends AbstractClientPlayerEnti
     @Unique
     private boolean canStartUsingSprinting() {
         return !this.isSprinting()
-                && this.input.hasForwardMovement()
+                && this.isWalking()
                 && this.canSprint()
-                && !this.isBlind()
+                && !this.isUsingItem()
+                && !this.hasStatusEffect(StatusEffects.BLINDNESS)
                 && (!this.hasVehicle() || this.canVehicleSprint(this.getVehicle()))
-                && (!this.isGliding() || this.isSubmergedInWater())
-                && (!this.shouldSlowDown() || this.isSubmergedInWater())
-                && (!this.isTouchingWater() || this.isSubmergedInWater());
+                && !this.isFallFlying();
     }
 }

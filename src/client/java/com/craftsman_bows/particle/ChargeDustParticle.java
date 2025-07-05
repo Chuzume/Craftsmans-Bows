@@ -41,9 +41,9 @@ public class ChargeDustParticle extends AnimatedParticle {
 
     @Override
     public void tick() {
-        this.lastX = this.x;
-        this.lastY = this.y;
-        this.lastZ = this.z;
+        this.prevPosX = this.x;
+        this.prevPosY = this.y;
+        this.prevPosZ = this.z;
 
         if (this.age++ >= this.maxAge) {
             this.markDead();
