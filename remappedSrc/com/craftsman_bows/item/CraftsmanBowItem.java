@@ -56,7 +56,7 @@ public abstract class CraftsmanBowItem extends BowItem {
             double offsetZ = 0;
 
             // 視線の先にパーティクルを追加
-            world.addParticleClient(ModParticleTypes.CHARGE_END,
+            world.addParticle(ModParticleTypes.CHARGE_END,
                     particleX, particleY, particleZ,
                     offsetX, offsetY, offsetZ);
         }
@@ -105,7 +105,7 @@ public abstract class CraftsmanBowItem extends BowItem {
             double offsetZ = 0;
 
             // 視線の先にパーティクルを追加
-            world.addParticleClient(ModParticleTypes.SHOOT,
+            world.addParticle(ModParticleTypes.SHOOT,
                     particleX, particleY, particleZ,
                     offsetX, offsetY, offsetZ);
         }
@@ -170,7 +170,7 @@ public abstract class CraftsmanBowItem extends BowItem {
                     + (world.random.nextDouble() - 0.5) * rangeZ;
 
             // パーティクルを追加し、収束先を設定
-            world.addParticleClient(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
+            world.addParticle(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
         }
     }
 }

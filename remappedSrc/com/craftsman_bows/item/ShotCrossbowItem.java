@@ -14,8 +14,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
+import net.minecraft.util.UseAction;
 import net.minecraft.util.ActionResult;
-import net.minecraft.item.consume.UseAction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import com.craftsman_bows.init.ModParticleTypes;
@@ -89,7 +89,7 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
                     + (world.random.nextDouble() - 0.5) * rangeZ;
 
             // 視線の先にパーティクルを追加
-            world.addParticleClient(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
+            world.addParticle(ModParticleTypes.CHARGE_DUST, particleX, particleY, particleZ, targetX, targetY, targetZ);
         }
 
         // 途中が寂しいので…
@@ -125,7 +125,7 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
             double offsetZ = 0;
 
             // 視線の先にパーティクルを追加
-            world.addParticleClient(ModParticleTypes.CHARGE_END, particleX, particleY, particleZ, offsetX, offsetY, offsetZ);
+            world.addParticle(ModParticleTypes.CHARGE_END, particleX, particleY, particleZ, offsetX, offsetY, offsetZ);
         }
     }
 

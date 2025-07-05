@@ -168,7 +168,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
         double offsetZ = (world.random.nextDouble() - 0.5) * 1;
 
         // 視線の先にパーティクルを追加
-        world.addParticleClient(ParticleTypes.CRIT,
+        world.addParticle(ParticleTypes.CRIT,
                 particleX, particleY, particleZ,
                 offsetX, offsetY, offsetZ);
 

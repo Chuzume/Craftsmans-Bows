@@ -4,13 +4,10 @@ import com.craftsman_bows.interfaces.entity.BypassCooldown;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
@@ -88,9 +85,9 @@ public abstract class PersistentProjectileEntityMixin extends Entity implements 
     }
 
     // NBTに書き込む処理
-    @Inject(method = "writeCustomDataToNbt", at = @At(value = "TAIL"))
-    public void writeCustomDataToNbt(NbtCompound nbt, CallbackInfo ci) {
-        nbt.putBoolean("BypassDamageCooldown", getBypassDamageCooldown());
+    @Inject(method = "writeCustomData", at = @At(value = "TAIL"))
+    public void writeCustomData(WriteView view, CallbackInfo ci) {
+        view.putBoolean("BypassDamageCooldown", getBypassDamageCooldown());
     //    nbt.putBoolean("WeakKnockback", getWeakKnockback());
     }
 }
