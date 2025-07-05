@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 // 右クリックの長押し中だろうがダッシュできるアイテムに関する処理
 
@@ -47,68 +48,18 @@ public abstract class CustomUsingMoveSpeedMixin extends AbstractClientPlayerEnti
     @Shadow
     protected int ticksLeftToDoubleTapSprint;
 
-    @Shadow public abstract void tick();
+    @Shadow
+    public abstract void tick();
 
     public CustomUsingMoveSpeedMixin(ClientWorld world, GameProfile profile) {
         super(world, profile);
     }
 
-
-    @Inject(method = "tickMovement()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;shouldSlowDown()Z" , shift = At.Shift.AFTER))
-    private void ChangeableWeaponSlowdown(CallbackInfo ci) {
-        if (this.isIgnoreSlowdown()) {
-            this.sidewaysSpeed *= 5.0F;
-            this.forwardSpeed *= 5.0F;
-        }
+    // ダッシュが開始できるかどうかのメソッドの後ろに処理を付け足して、「CanSprintWhileUsing」インターフェースのアイテムならダッシュ開始できるようにした
+    @Inject(method = "canStartSprinting", at = @At("TAIL"), cancellable = true)
+    private void canStartSprinting(CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue (this.canStartUsingSprinting());
     }
-
-    // アイテム使用時には移動速度が0.2倍になるので、5倍すれば元の速度に戻るってわけだ
-    @Inject(method = "tickMovementInput", at = @At(value = "FIELD", target = "Lnet/minecraft/client/network/ClientPlayerEntity;forwardSpeed:F", opcode = Opcodes.PUTFIELD, shift = At.Shift.AFTER))
-    private void onSetMovementSpeed(CallbackInfo ci) {
-        if (this.isIgnoreSlowdown()) {
-            this.sidewaysSpeed *= 5.0F;
-            this.forwardSpeed *= 5.0F;
-        }
-        // 移動速度を変更できるものは、5倍したあとに倍率かけて速度を変更する
-        ItemStack itemStack = target.getActiveItem();
-        if (itemStack.getItem() instanceof CustomUsingMoveItem customUsingMoveItem) {
-            float movementSpeed = customUsingMoveItem.getMovementSpeed();
-            this.sidewaysSpeed *= 5.0f * movementSpeed;
-            this.forwardSpeed *= 5.0f * movementSpeed;
-            customUsingMoveItem.resetMovementSpeed();
-        }
-    }
-
-    @Unique
-    private boolean wasPressingForwardKeyLastTick = false;
-
-    // アイテム使用しつつも前進キー2回でダッシュ可能になる
-    @Inject(method = "tickMovement", at = @At(value = "TAIL"))
-    private void canStartDoubleTapSprint(CallbackInfo ci) {
-
-        // 今回のフレームの状態
-        boolean isPressingForward = this.canStartUsingSprinting();
-
-        // キーが「今押されていて、前は押されていなかった」時だけ処理する
-        if (this.isIgnoreSlowdown() && isPressingForward && !wasPressingForwardKeyLastTick) {
-
-            // 1回だけ実行される処理（押した瞬間）
-            if (this.ticksLeftToDoubleTapSprint > 0) {
-                this.setSprinting(true);
-            } else {
-                this.ticksLeftToDoubleTapSprint = 7;
-            }
-        }
-
-        // 使用中でもダッシュ可能なアイテムを使ってるなら、キーでダッシュ開始できる
-        if (this.isIgnoreSlowdown() && this.input.playerInput.sprint()) {
-            this.setSprinting(true);
-        }
-
-        // 状態を記録（次の tick のために）
-        wasPressingForwardKeyLastTick = isPressingForward;
-    }
-
 
     // 移動速度下がらないアイテムを使っている場合、アイテム使用中はticksLeftToDoubleTapSprintが0になるのを無効化する
     @Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isUsingItem()Z"))
