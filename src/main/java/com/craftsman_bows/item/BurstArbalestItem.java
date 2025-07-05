@@ -3,7 +3,6 @@ package com.craftsman_bows.item;
 import com.craftsman_bows.init.ModSoundEvents;
 import com.craftsman_bows.interfaces.item.CustomUsingMoveItem;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
@@ -13,13 +12,12 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import com.craftsman_bows.init.ModComponents;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
 
     // 最初の使用時のアクション
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 
         ItemStack stack = user.getStackInHand(hand);
 
@@ -122,7 +120,7 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
     }
 
     // 矢を発射する処理
-    public void burstShot(ItemStack stack, ServerWorld world, LivingEntity user) {
+    public void burstShot(ItemStack stack, World world, LivingEntity user) {
 
         // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
         ItemStack itemStack = user.getProjectileType(stack);
@@ -173,14 +171,16 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
                 offsetX, offsetY, offsetZ);
 
         // ワールドがサーバーなら
-        if (!list.isEmpty()) {
-            this.shootAll(world, user, user.getActiveHand(), stack, list, 2.7f, 1.0f, false, null);
+        if (world instanceof ServerWorld serverWorld) {
+            if (!list.isEmpty()) {
+                this.shootAll(serverWorld, user, user.getActiveHand(), stack, list, 2.7f, 1.0f, false, null);
+            }
         }
     }
 
     // 持ってる間の処理
     @Override
-    public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
 
         if (entity instanceof LivingEntity user) {
             if (user.getMainHandStack().equals(stack) | user.getOffHandStack().equals(stack)) {
@@ -193,9 +193,10 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
                     stack.set(ModComponents.BURST_COUNT, burstCount - 1);
 
                     if ((user instanceof PlayerEntity playerEntity) && burstCount == 1) {
-                        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_COG_CROSSBOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 0.8f);
-                        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, SoundCategory.PLAYERS, 1.0f, 2.0f);
-                        playerEntity.getItemCooldownManager().set(stack, 15);
+                        user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_SHOOT, 1.0f, 0.8f);
+                        user.playSound(SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE, 1.0f, 2.0f);
+                        //user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PLACE, 1.0f, 1.5f);
+                        playerEntity.getItemCooldownManager().set(this, 15);
 
                         // プレイヤーの視線方向を取得
                         Vec3d lookDirection = user.getRotationVec(1.0F);
@@ -206,8 +207,17 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
                         double particleY = user.getEyeY() + lookDirection.y * distance; // 目の高さ
                         double particleZ = user.getZ() + lookDirection.z * distance;
 
-                        // 視線の先にパーティクルを追加
-                        world.spawnParticles(ParticleTypes.SMOKE, particleX, particleY, particleZ, 10, 0.0, 0.0, 0.0, 0.1);
+                        // パーティクルを複数発生させるループ
+                        for (int i = 0; i < 10; i++) {
+                            double offsetX = (world.random.nextDouble() - 0.5) * 0.2;
+                            double offsetY = (world.random.nextDouble() - 0.5) * 0.2;
+                            double offsetZ = (world.random.nextDouble() - 0.5) * 0.2;
+
+                            // 視線の先にパーティクルを追加
+                            world.addParticle(ParticleTypes.SMOKE,
+                                    particleX, particleY, particleZ,
+                                    offsetX, offsetY, offsetZ);
+                        }
                     }
                 }
             }
@@ -226,34 +236,31 @@ public class BurstArbalestItem extends CraftsmanBowItem implements CustomUsingMo
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
-    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (!(user instanceof PlayerEntity playerEntity)) {
-            return false;
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        if ((user instanceof PlayerEntity playerEntity)) {
+
+            int burstStack = stack.getOrDefault(ModComponents.BURST_STACK, 0);
+            stack.set(ModComponents.BURST_COUNT, burstStack);
+            stack.remove(ModComponents.BURST_STACK);
+
+            // バースト数に応じたクールタイムを設定
+            if (burstStack >= 1) {
+                playerEntity.getItemCooldownManager().set(this, 2000);
+            } else {
+                playerEntity.getItemCooldownManager().set(this, 15);
+            }
+
+            user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
+            user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
+
+            // 腕振る処理
+            Hand activeHand = user.getActiveHand();
+            if (activeHand == Hand.MAIN_HAND) {
+                user.swingHand(Hand.MAIN_HAND);
+            } else if (activeHand == Hand.OFF_HAND) {
+                user.swingHand(Hand.OFF_HAND);
+            }
         }
-
-        int burstStack = stack.getOrDefault(ModComponents.BURST_STACK, 0);
-        stack.set(ModComponents.BURST_COUNT, burstStack);
-        stack.remove(ModComponents.BURST_STACK);
-
-        // バースト数に応じたクールタイムを設定
-        if (burstStack >= 1) {
-            playerEntity.getItemCooldownManager().set(stack, 2000);
-        } else {
-            playerEntity.getItemCooldownManager().set(stack, 15);
-        }
-
-        user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
-        user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
-
-        // 腕振る処理
-        Hand activeHand = user.getActiveHand();
-        if (activeHand == Hand.MAIN_HAND) {
-            user.swingHand(Hand.MAIN_HAND);
-        } else if (activeHand == Hand.OFF_HAND) {
-            user.swingHand(Hand.OFF_HAND);
-        }
-
-        return true;
     }
 
     @Override

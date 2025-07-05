@@ -9,6 +9,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import com.craftsman_bows.init.ModSoundEvents;
 
@@ -41,63 +42,54 @@ public class ShortBowItem extends CraftsmanBowItem implements CanSprintWhileUsin
         // チャージ完了
         if (i == 10) {
             chargeEndParticle(world, user);
-            user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 1.4f );
+            user.playSound(ModSoundEvents.DUNGEONS_BOW_CHARGE_1, 1.0f, 1.4f);
         }
     }
 
     // 最初の使用時のアクション
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         boolean bl = !user.getProjectileType(itemStack).isEmpty();
         if (!user.isInCreativeMode() && !bl) {
-            return ActionResult.FAIL;
+            return TypedActionResult.fail(itemStack);
         } else {
             user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 1.2f);
             user.setCurrentHand(hand);
-            return ActionResult.CONSUME;
+            return TypedActionResult.consume(itemStack);
         }
     }
 
-    // 使用をやめたとき、つまりクリックを離したときの処理だ。
+    // 使用をやめたとき、つまりクリックを離したときの処理
+
     @Override
-    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        if (user instanceof PlayerEntity playerEntity) {
+            ItemStack itemStack = playerEntity.getProjectileType(stack);
+            if (!itemStack.isEmpty()) {
+                int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
+                float f = getPullProgress(i);
+                if (!(f < 0.1)) {
+                    List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
+                    if (world instanceof ServerWorld serverWorld) {
+                        if (!list.isEmpty()) {
+                            this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 1.6f, 1.0f, f == 1.0f, null);
+                        }
+                        if (f < 1) {
+                            world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.0f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + f * 0.5f);
+                        } else {
+                            world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 0.8f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + 0.9f);
+                            world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.4f);
+                        }
 
-        if (!(user instanceof PlayerEntity playerEntity)) {
-            return false;
-        }
 
-        // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
-        ItemStack itemStack = playerEntity.getProjectileType(stack);
-        if (itemStack.isEmpty()) {
-            return false;
-        }
-
-        // 使用時間0.1未満では使用をキャンセルする処理のようだ
-        int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
-        float f = getPullProgress(i);
-        if ((double) f < 0.1) {
-            return false;
-        }
-
-        // パーティクル
-        if (f >= 1) {
-            shootParticle(world, user);
-        }
-
-        // ここが放つ処理に見える。
-        List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
-        if (world instanceof ServerWorld serverWorld) {
-            if (!list.isEmpty()) {
-                this.shootAll(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, f * 1.6f, 1.0f, f == 1.0f, null);
-            }
-            if (f < 1) {
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.0f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + f * 0.5f);
-            } else {
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_1, SoundCategory.PLAYERS, 1.0f, 0.8f / (world.getRandom().nextFloat() * 0.4f + 1.2f) + 0.9f);
-                world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.4f);
+                        // パーティクル
+                        if (f >= 1) {
+                            shootParticle(world, user);
+                        }
+                    }
+                }
             }
         }
-        return true;
     }
 }

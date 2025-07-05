@@ -14,15 +14,14 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ActionResult;
-import net.minecraft.item.consume.UseAction;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import com.craftsman_bows.init.ModParticleTypes;
 
 import java.util.List;
 
-public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMoveItem, CustomArmPoseItem , CustomFirstPersonRender{
+public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMoveItem, CustomArmPoseItem, CustomFirstPersonRender {
     public ShotCrossbowItem(Settings settings) {
         super(settings);
     }
@@ -33,16 +32,17 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
 
     // 最初の使用時のアクション
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         boolean bl = !user.getProjectileType(itemStack).isEmpty();
         if (user.isInCreativeMode() || bl) {
             shootStack = 0;
             user.setCurrentHand(hand);
             user.playSound(ModSoundEvents.DUNGEONS_BOW_LOAD, 1.0f, 1.25f);
-            return ActionResult.CONSUME;
+            return TypedActionResult.consume(itemStack);
+
         }
-        return ActionResult.FAIL;
+        return TypedActionResult.fail(itemStack);
     }
 
     // アイテムを使用しているときの処理？
@@ -142,7 +142,9 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {return UseAction.NONE;}
+    public net.minecraft.util.UseAction getUseAction(ItemStack stack) {
+        return net.minecraft.util.UseAction.NONE;
+    }
 
     protected void shootArrow(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float divergence, boolean pickup) {
         float f = EnchantmentHelper.getProjectileSpread(world, stack, shooter, 0.0f);
@@ -162,43 +164,29 @@ public class ShotCrossbowItem extends CraftsmanBowItem implements CustomUsingMov
         }
     }
 
-    // 使用をやめたとき、つまりクリックを離したときの処理だ。
+    // 使用をやめたとき、つまりクリックを離したときの処理
     @Override
-    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (!(user instanceof PlayerEntity playerEntity)) {
-            return false;
-        }
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        if (user instanceof PlayerEntity playerEntity) {
+            ItemStack itemStack = playerEntity.getProjectileType(stack);
+            if (!itemStack.isEmpty()) {
+                int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
+                float f = getPullProgress(i);
+                if (!(f < 1)) {
+                    List<ItemStack> list = load(stack, itemStack, playerEntity);
+                    if (world instanceof ServerWorld serverWorld && !list.isEmpty()) {
+                        this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 0.0f, true);
+                        for (int i2 = 0; i2 < shootStack; i2++) {
+                            this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
+                        }
+                        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 1.0f);
+                        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
 
-        // プレイヤーを定義する処理のようだ。後は…手持ちの矢の種類を取得する処理？
-        ItemStack itemStack = playerEntity.getProjectileType(stack);
-        if (itemStack.isEmpty()) {
-            return false;
-        }
-
-        // 使用時間0.1未満では使用をキャンセルする処理のようだ
-        int i = this.getMaxUseTime(stack, user) - remainingUseTicks;
-        float f = getPullProgress(i);
-        if ((double) f < 1) {
-            return false;
-        }
-
-        // ここが放つ処理に見える。
-        List<ItemStack> list = BowItem.load(stack, itemStack, playerEntity);
-
-        if (world instanceof ServerWorld serverWorld) {
-            if (!list.isEmpty()) {
-                this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 0.0f, true);
-                for (int i2 = 0; i2< shootStack; i2++) {
-                    this.shootArrow(serverWorld, playerEntity, playerEntity.getActiveHand(), stack, list, 15.0f, false);
+                        shootStack = 0;
+                    }
                 }
-                shootStack = 0;
             }
         }
-
-        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.LEGACY_BOW_SHOOT_2, SoundCategory.PLAYERS, 1.0f, 1.0f);
-        world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), ModSoundEvents.DUNGEONS_BOW_SHOOT, SoundCategory.PLAYERS, 1.0f, 1.3f);
-
-        return true;
     }
 
     // インターフェース「CustomUsingMoveItem」として必要な処理

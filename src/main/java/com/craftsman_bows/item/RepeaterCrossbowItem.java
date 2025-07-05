@@ -15,8 +15,8 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ActionResult;
-import net.minecraft.item.consume.UseAction;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.UseAction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -34,7 +34,7 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
 
     // 最初の使用時のアクション
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 
         // サウンド
         user.playSound(ModSoundEvents.DUNGEONS_COG_CROSSBOW_PICKUP, 0.4f, 2.0f);
@@ -283,11 +283,11 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
                         particleX, particleY, particleZ,
                         offsetX, offsetY, offsetZ);
 
-            // クールダウンに突入
-            if (!(user instanceof PlayerEntity playerEntity)) {
-                return;
-            }
-            playerEntity.getItemCooldownManager().set(stack, 60);
+                // クールダウンに突入
+                if (!(user instanceof PlayerEntity playerEntity)) {
+                    return;
+                }
+                playerEntity.getItemCooldownManager().set(this, 60);
             }
         }
     }
@@ -377,40 +377,38 @@ public class RepeaterCrossbowItem extends BowItem implements CustomArmPoseItem, 
 
     // 使用をやめたとき、つまりクリックを離したときの処理だ。
     @Override
-    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (!(user instanceof PlayerEntity playerEntity)) {
-            return false;
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        if ((user instanceof PlayerEntity playerEntity)) {
+
+            fov = Float.NaN;
+
+            // 使用時間に応じたクールタイムがかかる
+            int useTick = this.getMaxUseTime(stack, user) - remainingUseTicks;
+
+            if (useTick <= 82) {
+                playerEntity.getItemCooldownManager().set(this, 20);
+            }
+
+            if (useTick >= 82 && useTick <= 114) {
+                playerEntity.getItemCooldownManager().set(this, 30);
+            }
+
+            if (useTick == 114) {
+                playerEntity.getItemCooldownManager().set(this, 60);
+            }
+
+            user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
+            user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
+
+
+            // 腕振る処理
+            Hand activeHand = user.getActiveHand();
+            if (activeHand == Hand.MAIN_HAND) {
+                user.swingHand(Hand.MAIN_HAND);
+            } else if (activeHand == Hand.OFF_HAND) {
+                user.swingHand(Hand.OFF_HAND);
+            }
         }
-        fov = Float.NaN;
-
-        // 使用時間に応じたクールタイムがかかる
-        int useTick = this.getMaxUseTime(stack, user) - remainingUseTicks;
-
-            if (useTick <= 82){
-                playerEntity.getItemCooldownManager().set(stack, 20);
-            }
-
-            if (useTick >= 82 && useTick <= 114){
-                playerEntity.getItemCooldownManager().set(stack, 30);
-            }
-
-            if (useTick == 114){
-                playerEntity.getItemCooldownManager().set(stack, 60);
-            }
-
-        user.playSound(SoundEvents.BLOCK_PISTON_CONTRACT, 1.0f, 1.5f);
-        user.playSound(SoundEvents.BLOCK_IRON_DOOR_CLOSE, 1.0f, 2f);
-
-
-        // 腕振る処理
-        Hand activeHand = user.getActiveHand();
-        if (activeHand == Hand.MAIN_HAND) {
-            user.swingHand(Hand.MAIN_HAND);
-        } else if (activeHand == Hand.OFF_HAND) {
-            user.swingHand(Hand.OFF_HAND);
-        }
-
-        return true;
     }
 
     @Override
