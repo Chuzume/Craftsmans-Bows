@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "craftsman_bows",
-	"version": "1.1.5",
+	"version": "1.1.5-hotfix1",
 	"name": "Craftsman's bows",
 	"description": "Add some vanilla-like ranged-weapons.",
 	"authors": [
