@@ -7,12 +7,12 @@
         "/SR"
     ],
     "key": {
-        "#": "minecraft:dispenser",
-        "g": "minecraft:gold_ingot",
-        "/": "minecraft:stick",
-        "S": "minecraft:string",
-        "R": "minecraft:repeater",
-        "n": "minecraft:netherite_ingot"
+        "#": {"item": "minecraft:dispenser"},
+        "g": {"item":"minecraft:gold_ingot"},
+        "/": {"item":"minecraft:stick"},
+        "S": {"item":"minecraft:string"},
+        "R": {"item":"minecraft:repeater"},
+        "n": {"item":"minecraft:netherite_ingot"}
     },
     "result": {
         "id": "craftsman_bows:burst_arbalest",
