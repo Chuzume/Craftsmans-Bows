@@ -19,10 +19,8 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
@@ -51,10 +49,10 @@ public abstract class AbstractSkeletonEntityMixin extends HostileEntity implemen
     AbstractSkeletonEntity self = (AbstractSkeletonEntity) (Object) this;
 
     @Unique
-    private final ShortBowAttackGoal shortBowAttackGoal = new ShortBowAttackGoal(self, 1.5F, 10, 7.5F, 0.8F, 20);
+    private final ShortBowAttackGoal<AbstractSkeletonEntity> shortBowAttackGoal = new ShortBowAttackGoal<>(self, 1.5F, 10, 7.5F, 0.8F, 20);
 
     @Unique
-    private final LongBowAttackGoal longBowAttackGoal = new LongBowAttackGoal(self, 0.5F, 60, 45.0F, 2.0F, 40);
+    private final LongBowAttackGoal<AbstractSkeletonEntity> longBowAttackGoal = new LongBowAttackGoal<>(self, 0.5F, 60, 45.0F, 2.0F, 40);
 
     protected AbstractSkeletonEntityMixin(EntityType<? extends MobEntity> entityType, World world) {
         super((EntityType<? extends AbstractSkeletonEntity>) entityType, world);
@@ -85,9 +83,9 @@ public abstract class AbstractSkeletonEntityMixin extends HostileEntity implemen
                     this.longBowAttackType();
                 }
         }
-        ;
     }
 
+    @Unique
     private void shortBowAttackType() {
         // 難易度によって弓を引く時間を変える
         int i = this.getShortHardAttackInterval();
@@ -100,14 +98,17 @@ public abstract class AbstractSkeletonEntityMixin extends HostileEntity implemen
         super.goalSelector.add(4, this.shortBowAttackGoal);
     }
 
+    @Unique
     private int getShortHardAttackInterval() {
         return 10;
     }
 
+    @Unique
     private int getShortRegularAttackInterval() {
         return 20;
     }
 
+    @Unique
     private void longBowAttackType() {
         // 難易度によって弓を引く時間を変える
         int i = this.getLongHardAttackInterval();
@@ -120,10 +121,12 @@ public abstract class AbstractSkeletonEntityMixin extends HostileEntity implemen
         super.goalSelector.add(4, this.longBowAttackGoal);
     }
 
+    @Unique
     private int getLongHardAttackInterval() {
         return 50;
     }
 
+    @Unique
     private int getLongRegularAttackInterval() {
         return 60;
     }

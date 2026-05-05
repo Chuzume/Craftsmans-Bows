@@ -14,7 +14,7 @@ import net.minecraft.item.Item;
 
 import java.util.EnumSet;
 
-public class CraftsmanBowAttackGoal<T extends HostileEntity & RangedAttackMob> extends BowAttackGoal {
+public class CraftsmanBowAttackGoal<T extends HostileEntity & RangedAttackMob> extends BowAttackGoal<T> {
     protected T actor;
     protected double speed;
     protected int attackInterval;
@@ -25,7 +25,7 @@ public class CraftsmanBowAttackGoal<T extends HostileEntity & RangedAttackMob> e
     protected boolean backward;
     protected int combatTicks = -1;
     protected Item holdingItem;
-    protected float power = 1.0F;
+    protected float power;
     private final int canShoot;
 
     public CraftsmanBowAttackGoal(T actor, double speed, int attackInterval, float range, float power, int canShoot) {
@@ -90,8 +90,7 @@ public class CraftsmanBowAttackGoal<T extends HostileEntity & RangedAttackMob> e
 
                 this.actor.getMoveControl().strafeTo(this.backward ? -0.5F : 0.5F, this.movingToLeft ? 0.5F : -0.5F);
                 Entity var7 = this.actor.getControllingVehicle();
-                if (var7 instanceof MobEntity) {
-                    MobEntity mobEntity = (MobEntity)var7;
+                if (var7 instanceof MobEntity mobEntity) {
                     mobEntity.lookAtEntity(livingEntity, 30.0F, 30.0F);
                 }
 
