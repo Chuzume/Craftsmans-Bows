@@ -28,7 +28,7 @@ public class CraftsmanBowAttackGoal<T extends HostileEntity & RangedAttackMob> e
     protected float power;
     private final int canShoot;
 
-    public CraftsmanBowAttackGoal(T actor, double speed, int attackInterval, float range, float power, int canShoot) {
+    public CraftsmanBowAttackGoal(T actor, double speed, int attackInterval, float range, float power, int canShoot, Item holdingItem) {
         super(actor, speed, attackInterval, range);
         this.actor = actor;
         this.speed = speed;
@@ -37,6 +37,7 @@ public class CraftsmanBowAttackGoal<T extends HostileEntity & RangedAttackMob> e
         this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
         this.power = power;
         this.canShoot = canShoot;
+        this.holdingItem = holdingItem;
     }
 
     @Override

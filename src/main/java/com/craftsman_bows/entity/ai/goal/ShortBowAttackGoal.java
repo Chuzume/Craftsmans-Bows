@@ -8,8 +8,7 @@ import net.minecraft.entity.mob.HostileEntity;
 public class ShortBowAttackGoal<T extends HostileEntity & RangedAttackMob> extends CraftsmanBowAttackGoal<T> {
 
     public ShortBowAttackGoal(T actor, double speed, int attackInterval, float range, float power, int canShoot) {
-        super(actor, speed, attackInterval, range, power, canShoot);
-        super.holdingItem = item.SHORT_BOW;
+        super(actor, speed, attackInterval, range, power, canShoot, item.SHORT_BOW);
     }
 
     @Override

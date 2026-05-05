@@ -8,8 +8,7 @@ import net.minecraft.entity.mob.HostileEntity;
 public class LongBowAttackGoal<T extends HostileEntity & RangedAttackMob> extends CraftsmanBowAttackGoal<T> {
 
     public LongBowAttackGoal(T actor, double speed, int attackInterval, float range, float power, int canShoot) {
-        super(actor, speed, attackInterval, range, power, canShoot);
-        super.holdingItem = item.LONG_BOW;
+        super(actor, speed, attackInterval, range, power, canShoot, item.LONG_BOW);
     }
 
     @Override
