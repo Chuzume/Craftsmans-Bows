@@ -49,10 +49,10 @@ public abstract class AbstractSkeletonEntityMixin extends HostileEntity implemen
     AbstractSkeletonEntity self = (AbstractSkeletonEntity) (Object) this;
 
     @Unique
-    private final ShortBowAttackGoal<AbstractSkeletonEntity> shortBowAttackGoal = new ShortBowAttackGoal<>(self, 1.5F, 10, 7.5F, 0.8F, 20);
+    private final ShortBowAttackGoal<AbstractSkeletonEntity> shortBowAttackGoal = new ShortBowAttackGoal<>(self, 1.025F, 10, 10F, 0.8F, 20);
 
     @Unique
-    private final LongBowAttackGoal<AbstractSkeletonEntity> longBowAttackGoal = new LongBowAttackGoal<>(self, 0.5F, 60, 45.0F, 2.0F, 40);
+    private final LongBowAttackGoal<AbstractSkeletonEntity> longBowAttackGoal = new LongBowAttackGoal<>(self, 0.5F, 60, 50.0F, 2.0F, 40);
 
     protected AbstractSkeletonEntityMixin(EntityType<? extends MobEntity> entityType, World world) {
         super((EntityType<? extends AbstractSkeletonEntity>) entityType, world);
