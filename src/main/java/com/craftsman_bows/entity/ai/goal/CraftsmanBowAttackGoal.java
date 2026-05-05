@@ -15,17 +15,17 @@ import net.minecraft.item.Item;
 import java.util.EnumSet;
 
 public class CraftsmanBowAttackGoal<T extends HostileEntity & RangedAttackMob> extends BowAttackGoal<T> {
-    protected T actor;
-    protected double speed;
-    protected int attackInterval;
-    protected float squaredRange;
-    protected int cooldown = -1;
-    protected int targetSeeingTicker;
-    protected boolean movingToLeft;
-    protected boolean backward;
-    protected int combatTicks = -1;
-    protected Item holdingItem;
-    protected float power;
+    private final T actor;
+    private final double speed;
+    private final int attackInterval;
+    private final float squaredRange;
+    private int cooldown = -1;
+    private int targetSeeingTicker;
+    private boolean movingToLeft;
+    private boolean backward;
+    private int combatTicks = -1;
+    private final Item holdingItem;
+    private final float power;
     private final int canShoot;
 
     public CraftsmanBowAttackGoal(T actor, double speed, int attackInterval, float range, float power, int canShoot, Item holdingItem) {
