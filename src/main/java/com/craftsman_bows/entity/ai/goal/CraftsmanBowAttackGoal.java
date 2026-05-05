@@ -1,0 +1,125 @@
+package com.craftsman_bows.entity.ai.goal;
+
+import com.craftsman_bows.interfaces.entity.CraftsmanBowUser;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.RangedAttackMob;
+import net.minecraft.entity.ai.goal.BowAttackGoal;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.item.BowItem;
+import net.minecraft.item.Item;
+
+import java.util.EnumSet;
+
+public class CraftsmanBowAttackGoal<T extends HostileEntity & RangedAttackMob> extends BowAttackGoal {
+    protected T actor;
+    protected double speed;
+    protected int attackInterval;
+    protected float squaredRange;
+    protected int cooldown = -1;
+    protected int targetSeeingTicker;
+    protected boolean movingToLeft;
+    protected boolean backward;
+    protected int combatTicks = -1;
+    protected Item holdingItem;
+    protected float power = 1.0F;
+    private final int canShoot;
+
+    public CraftsmanBowAttackGoal(T actor, double speed, int attackInterval, float range, float power, int canShoot) {
+        super(actor, speed, attackInterval, range);
+        this.actor = actor;
+        this.speed = speed;
+        this.attackInterval = attackInterval;
+        this.squaredRange = range * range;
+        this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
+        this.power = power;
+        this.canShoot = canShoot;
+    }
+
+    @Override
+    protected boolean isHoldingBow() {
+        return this.actor.isHolding(this.holdingItem);
+    }
+
+    @Override
+    public void tick() {
+        LivingEntity livingEntity = this.actor.getTarget();
+        if (livingEntity != null) {
+            double d = this.actor.squaredDistanceTo(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+            boolean bl = this.actor.getVisibilityCache().canSee(livingEntity);
+            boolean bl2 = this.targetSeeingTicker > 0;
+            if (bl != bl2) {
+                this.targetSeeingTicker = 0;
+            }
+
+            if (bl) {
+                ++this.targetSeeingTicker;
+            } else {
+                --this.targetSeeingTicker;
+            }
+
+            if (!(d > (double)this.squaredRange) && this.targetSeeingTicker >= 20) {
+                this.actor.getNavigation().stop();
+                ++this.combatTicks;
+            } else {
+                this.actor.getNavigation().startMovingTo(livingEntity, this.speed);
+                this.combatTicks = -1;
+            }
+
+            if (this.combatTicks >= 20) {
+                if ((double)this.actor.getRandom().nextFloat() < 0.3) {
+                    this.movingToLeft = !this.movingToLeft;
+                }
+
+                if ((double)this.actor.getRandom().nextFloat() < 0.3) {
+                    this.backward = !this.backward;
+                }
+
+                this.combatTicks = 0;
+            }
+
+            if (this.combatTicks > -1) {
+                if (d > (double)(this.squaredRange * 0.75F)) {
+                    this.backward = false;
+                } else if (d < (double)(this.squaredRange * 0.25F)) {
+                    this.backward = true;
+                }
+
+                this.actor.getMoveControl().strafeTo(this.backward ? -0.5F : 0.5F, this.movingToLeft ? 0.5F : -0.5F);
+                Entity var7 = this.actor.getControllingVehicle();
+                if (var7 instanceof MobEntity) {
+                    MobEntity mobEntity = (MobEntity)var7;
+                    mobEntity.lookAtEntity(livingEntity, 30.0F, 30.0F);
+                }
+
+                this.actor.lookAtEntity(livingEntity, 30.0F, 30.0F);
+            } else {
+                this.actor.getLookControl().lookAt(livingEntity, 30.0F, 30.0F);
+            }
+
+            if (this.actor.isUsingItem()) {
+                if (!bl && this.targetSeeingTicker < -60) {
+                    this.actor.clearActiveItem();
+                } else if (bl) {
+                    int i = this.actor.getItemUseTime();
+                    if (i >= this.canShoot) {
+                        this.actor.clearActiveItem();
+                        if (actor instanceof CraftsmanBowUser user) {
+                            user.craftsmanBowShootAt(livingEntity, getPullProgress(i), this.holdingItem, this.power);
+                        }
+                        this.cooldown = this.attackInterval;
+                    }
+                }
+            } else if (--this.cooldown <= 0 && this.targetSeeingTicker >= -60) {
+                this.actor.setCurrentHand(ProjectileUtil.getHandPossiblyHolding(this.actor, this.holdingItem));
+            }
+        }
+    }
+
+    protected float getPullProgress(int i) {
+      return BowItem.getPullProgress(i);
+    }
+}

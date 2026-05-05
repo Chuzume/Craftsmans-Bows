@@ -3,7 +3,8 @@
   "package": "com.craftsman_bows.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "PersistentProjectileEntityMixin"
+    "PersistentProjectileEntityMixin",
+    "AbstractSkeletonEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
