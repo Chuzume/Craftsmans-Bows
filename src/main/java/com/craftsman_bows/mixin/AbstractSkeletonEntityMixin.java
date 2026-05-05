@@ -19,6 +19,7 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -72,25 +73,16 @@ public abstract class AbstractSkeletonEntityMixin extends HostileEntity implemen
             super.goalSelector.remove(this.longBowAttackGoal);
 
             // アイテムチェック
-                // 右手
-                ItemStack mainItemStack = self.getStackInHand(Hand.MAIN_HAND);
-                if (mainItemStack.isOf(item.SHORT_BOW)) {
+                // ショートボウ
+                ItemStack itemStack = this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, item.SHORT_BOW));
+                if (itemStack.isOf(item.SHORT_BOW)) {
                     this.shortBowAttackType();
                     return;
                 }
-                if (mainItemStack.isOf(item.LONG_BOW)) {
+                // ロングボウ
+                itemStack = this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, item.LONG_BOW));
+                if (itemStack.isOf(item.LONG_BOW)) {
                     this.longBowAttackType();
-                    return;
-                }
-                // 左手
-                ItemStack offItemStack = self.getStackInHand(Hand.OFF_HAND);
-                if (offItemStack.isOf(item.SHORT_BOW)) {
-                    this.shortBowAttackType();
-                    return;
-                }
-                if (offItemStack.isOf(item.LONG_BOW)) {
-                    this.longBowAttackType();
-                    return;
                 }
         }
         ;
