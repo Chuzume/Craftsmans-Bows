@@ -45,6 +45,7 @@ public class CraftsmanBowAttackGoal<T extends HostileEntity & RangedAttackMob> e
         return this.actor.isHolding(this.holdingItem);
     }
 
+    // バニラのtickだとちょっと拡張性にかけるのでちょい変更を。
     @Override
     public void tick() {
         LivingEntity livingEntity = this.actor.getTarget();
@@ -119,6 +120,7 @@ public class CraftsmanBowAttackGoal<T extends HostileEntity & RangedAttackMob> e
         }
     }
 
+    // 弓をどれくらい引いたか確認。現在のままだとバニラの弓の物を取得してしまうので、継承先でオーバーライドし変更すること。
     protected float getPullProgress(int i) {
       return BowItem.getPullProgress(i);
     }
