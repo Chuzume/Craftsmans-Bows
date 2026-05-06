@@ -5,7 +5,6 @@ import com.craftsman_bows.entity.ai.goal.ShortBowAttackGoal;
 import com.craftsman_bows.init.ModSoundEvents;
 import com.craftsman_bows.init.item;
 import com.craftsman_bows.interfaces.entity.CraftsmanBowUser;
-import com.craftsman_bows.item.CraftsmanBowItem;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -19,7 +18,6 @@ import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
@@ -30,7 +28,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractSkeletonEntity.class)
@@ -124,28 +121,6 @@ public abstract class AbstractSkeletonEntityMixin extends HostileEntity implemen
     @Unique
     private int getLongRegularAttackInterval() {
         return 60;
-    }
-
-    // 持ってるアイテムがバニラの弓限定はきついからな、変えさせてもらうぜ！
-    @Redirect(
-            method = "shootAt",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/entity/projectile/ProjectileUtil;getHandPossiblyHolding(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/Item;)Lnet/minecraft/util/Hand;"
-            )
-    )
-    private Hand redirectHand(LivingEntity entity, Item item) {
-
-        for (Hand hand : Hand.values()) {
-            ItemStack stack = entity.getStackInHand(hand);
-
-            // このmod製弓の持ってる位置を取得
-            if (stack.isOf(item) || stack.getItem() instanceof CraftsmanBowItem) {
-                return hand;
-            }
-        }
-
-        return Hand.MAIN_HAND;
     }
 
     @Override
