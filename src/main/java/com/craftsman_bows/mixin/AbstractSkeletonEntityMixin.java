@@ -38,8 +38,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractSkeletonEntity.class)
 public abstract class AbstractSkeletonEntityMixin extends HostileEntity implements CraftsmanBowUser {
 
-    @Shadow @Final private MeleeAttackGoal meleeAttackGoal;
-
     @Shadow
     protected abstract PersistentProjectileEntity createArrowProjectile(ItemStack arrow, float damageModifier, @Nullable ItemStack shotFrom);
 
@@ -66,7 +64,6 @@ public abstract class AbstractSkeletonEntityMixin extends HostileEntity implemen
 
         if (self.getWorld() != null && !self.getWorld().isClient) {
             // 一度攻撃手段をリセット
-            super.goalSelector.remove(this.meleeAttackGoal);
             super.goalSelector.remove(this.shortBowAttackGoal);
             super.goalSelector.remove(this.longBowAttackGoal);
 
